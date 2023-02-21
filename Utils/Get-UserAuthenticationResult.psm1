@@ -38,14 +38,14 @@ function Get-UserAuthenticationResult
 
         [Parameter(Mandatory = $False)]
         [ValidateNotNullOrEmpty()]
-        [string]$authBehavior = "Auto",
+        [string]$authBehavior = 'Auto',
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]$graphEndPoint,
 
         [Parameter(Mandatory = $True)]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$clientId,
 
         [Parameter(Mandatory = $True)]
@@ -62,42 +62,41 @@ function Get-UserAuthenticationResult
 
     $authHeader = $null
     $MSGAuthInfo = Get-MSGConfig
-    if ($Force.IsPresent) { $authBehavior = "Force" }
+    if ($Force.IsPresent)
+    {
+        $authBehavior = 'Force'
+    }
     $Params = @{
-        "EndPoint"               = $graphEndPoint
-        "PromptBehavior"         = $authBehavior
-        "TenantDomain"           = $tenant
-        "ClientId"               = $clientId
-        "AuthType"               = "User"
-        "AuthenticationEndpoint" = $authority
+        'EndPoint'               = $graphEndPoint
+        'PromptBehavior'         = $authBehavior
+        'TenantDomain'           = $tenant
+        'ClientId'               = $clientId
+        'AuthType'               = 'User'
+        'AuthenticationEndpoint' = $authority
     }
     # PS7 doesn't support interactive authN so need to flip to DeviceCode authN
     if ($PSVersionTable.PSVersion.Major -gt 5)
     {
-        $Params.AuthType = "DeviceCode"
+        $Params.AuthType = 'DeviceCode'
     }
 
     if (-not [string]::IsNullOrEmpty($AccountId))
     {
-        $Params.Add("AccountId", $AccountId)
+        $Params.Add('AccountId', $AccountId)
     }
-    try { $MSGAuthResult = Get-AzureADAccessToken @Params }
+    try
+    {
+        $MSGAuthResult = Get-AzureADAccessToken @Params
+    }
     catch
     {
-        $Params.PromptBehavior = "Select"
+        $Params.PromptBehavior = 'Select'
         $MSGAuthResult = $null
     }
 
     if ($null -eq $MSGAuthResult)
     {
-        try
-        {
-            $MSGAuthResult = Get-AzureADAccessToken @Params
-        }
-        catch
-        {
-            throw
-        }
+        $MSGAuthResult = Get-AzureADAccessToken @Params
     }
     #
     # Update global variables to current values
@@ -117,7 +116,7 @@ function Get-UserAuthenticationResult
         }
         $MSGAuthInfo.Initialized = $true
         Set-MSGConfig -ConfigObject $MSGAuthInfo
-        $authHeader = $authHeader = $MSGAuthResult.CreateAuthorizationHeader()
+        $authHeader = $MSGAuthResult.CreateAuthorizationHeader()
     }
 
     return $authHeader

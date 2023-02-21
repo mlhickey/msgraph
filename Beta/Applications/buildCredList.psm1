@@ -8,10 +8,10 @@ function buildCredList
     $list = @()
     if ($null -ne $cObjectList)
     {
-        $type = (Get-Member -InputObject $cObjectList[0]).Where( { $_.Name -eq "type" })
+        $type = (Get-Member -InputObject $cObjectList[0]).Where( { $_.Name -eq 'type' })
         if ([string]::IsNullOrEmpty($type))
         {
-            $type = "Password"
+            $type = 'Password'
         }
         else
         {
@@ -21,6 +21,7 @@ function buildCredList
         {
             $obj = [PSCustomObject][Ordered]@{
                 StartDate = (Get-Date $cred.startDateTime).ToString()
+                EndDate   = (Get-Date $cred.endDateTime).ToString()
                 KeyId     = $cred.KeyId
                 Type      = $type
             }
