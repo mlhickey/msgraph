@@ -51,69 +51,69 @@ function Get-MSGGroup
     .LINK
     https://docs.microsoft.com/en-us/graph/api/group-get?view=graph-rest-beta&tabs=http
     #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         # UserprincipalName or objectId
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the group.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the group.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "Type of group: DynamicMembership, Unified or Elevated")]
+            HelpMessage = 'Type of group: DynamicMembership, Unified or Elevated')]
         [ValidateSet(
-            "DynamicMembership",
-            "Unified",
-            "Elevated")]
+            'DynamicMembership',
+            'Unified',
+            'Elevated')]
         [string]$GroupType,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Search criteria.")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Search criteria.')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Filter",
-            HelpMessage = "OData query filter")]
+            ParameterSetName = 'Filter',
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [string]$Filter,
 
-        [Parameter(ParameterSetName = "Id",
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
-        [Parameter(ParameterSetName = "Filter")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'Id',
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
+        [Parameter(ParameterSetName = 'Filter')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$All,
 
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$AdvancedQuery,
 
-        [Parameter(ParameterSetName = "Count")]
+        [Parameter(ParameterSetName = 'Count')]
         [switch]$CountOnly
     )
 
@@ -122,7 +122,7 @@ function Get-MSGGroup
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         if (-not [string]::IsNullOrEmpty($GroupType))
@@ -145,24 +145,24 @@ function Get-MSGGroup
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
 
-            "id"
+            'id'
             {
                 Get-MSGObject -Type "groups/$id" -Filter $queryFilter
                 break
             }
-            "osearch"
+            'osearch'
             {
-                Get-MSGObject -Type "groups" -SearchString "startswith(displayName,'$SearchString')" -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Type 'groups' -SearchString "startswith(displayName,'$SearchString')" -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
-            { $PSItem -match "topall|search" }
+            { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type "groups" -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Type 'groups' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
-            "count"
+            'count'
             {
-                Get-MSGObject -Type "groups" -Filter $queryFilter -CountOnly
+                Get-MSGObject -Type 'groups' -Filter $queryFilter -CountOnly
             }
         }
     }

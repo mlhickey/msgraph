@@ -2,7 +2,7 @@ function Remove-MSPIMResourceRoleAssignment
 {
     <#
     .SYNOPSIS
-    Get current PIM assignments
+    Remove current PIM assignments
 
     .DESCRIPTION
     The Remove-MSPIMResourceRoleAssignments cmdlet removes the speciifed PIM role assignment from the specified user
@@ -28,34 +28,34 @@ function Remove-MSPIMResourceRoleAssignment
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "GUID of PIM role to enable")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
-        [Alias("RoleDefinitionId")]
+            HelpMessage = 'GUID of PIM role to enable')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
+        [Alias('RoleDefinitionId')]
         [string]$RoleID,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
         [ValidateNotNullOrEmpty()]
-        [Alias("ObjectId", "UserPrincipalName")]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the resource being assigned")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the resource being assigned')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$ResourceId,
 
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
         [ValidateSet(
-            "Permanent",
-            "Eligible")]
-        [string]$AssignmentType = "Eligible"
+            'Permanent',
+            'Eligible')]
+        [string]$AssignmentType = 'Eligible'
     )
 
     begin
@@ -63,7 +63,7 @@ function Remove-MSPIMResourceRoleAssignment
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -71,7 +71,7 @@ function Remove-MSPIMResourceRoleAssignment
     {
         if ([string]::IsNullOrEmpty($RoleID))
         {
-            Write-Error "You must supply a PIM role name or id"
+            Write-Error 'You must supply a PIM role name or id'
             return $null
         }
 
@@ -83,12 +83,12 @@ function Remove-MSPIMResourceRoleAssignment
             resourceId       = $ResourceId
             roleDefinitionId = $RoleID
             subjectId        = $SubjectId
-            type             = "AdminRemove"
+            type             = 'AdminRemove'
         }
 
-        if ($PSCmdlet.ShouldProcess("$Id", "Remove resource assignment"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Remove resource assignment'))
         {
-            Set-MSGObject -Type "privilegedAccess/azureResources/roleAssignmentRequests" -Method POST -Body $body -ObjectName "MSPIM"
+            Set-MSGObject -Type 'privilegedAccess/azureResources/roleAssignmentRequests' -Method POST -Body $body -ObjectName 'MSPIM'
         }
     }
 }

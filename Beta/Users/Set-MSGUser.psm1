@@ -69,6 +69,12 @@ function Set-MSGUser
         [string]$DisplayName,
 
         [Parameter(Mandatory = $false)]
+        [string]$EmployeeHireDate,        
+        
+        [Parameter(Mandatory = $false)]
+        [string]$EmployeeLeaveDateTime,        
+        
+        [Parameter(Mandatory = $false)]
         [string]$EmployeeId,
 
         [Parameter(Mandatory = $false)]

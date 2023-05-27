@@ -51,8 +51,8 @@ function Get-MSGUserIsMemberOf
     {
         $id = [uri]::EscapeDataString($id)
         $body = @{ "groupIds" = $GroupList }
-        #$type = "users/{0}/checkMemberGroups" -f $Id
-        $typeString = "users/{0}/checkMemberObjects" -f $Id
-        Get-MSGObject -Type $typeString -Method POST -Body $body -All
+        $typeString = "users/{0}/checkMemberGroups" -f $Id
+        #$typeString = "users/{0}/checkMemberObjects" -f $Id
+        Get-MSGObject -Type $typeString -Method POST -Body $body
     }
 }

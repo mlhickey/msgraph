@@ -163,7 +163,7 @@ function Connect-MSG
         [Parameter(Mandatory = $False,
             ParameterSetName = 'AppId')]
         [Alias('ClientId')]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$ApplicationId,
 
         [Parameter(Mandatory = $False,
@@ -180,22 +180,7 @@ function Connect-MSG
 
     begin
     {
-        $MSGAuthInfo = [PSCustomObject]@{
-            AuthType          = $null
-            DelegatedCliendId = $null
-            DelegateVault     = $null
-            TenantDomain      = $null
-            TenantId          = $null
-            GraphVersion      = $null
-            GraphUrl          = $null
-            Authority         = $null
-            ClientId          = $null
-            Environment       = $null
-            User              = $null
-            StoreLocation     = $null
-            Initialized       = $false
-        }
-
+        $isInitialized = $false
         if ($PSBoundParameters.Count)
         {
             Clear-MSGConfig
@@ -203,6 +188,10 @@ function Connect-MSG
         else
         {
             $MSGConfig = Get-MSGConfig
+            if ($null -ne $MSGConfig)
+            {
+                $isInitialized = $true
+            }
         }
         #region Validation
         if ([string]::IsNullOrEmpty($AzureEnvironmentName))
@@ -259,42 +248,40 @@ function Connect-MSG
 
         if ([string]::IsNullOrEmpty($ApplicationId))
         {
-            if ([string]::IsNullOrEmpty($MSGConfig.ClientId))
+            if ([string]::IsNullOrEmpty($MSGConfig.ApplicationId))
             {
                 $ApplicationId = '1b730954-1685-4b74-9bfd-dac224a7b894'
             }
             else
             {
-                $ApplicationId = $MSGConfig.ClientId
+                $ApplicationId = $MSGConfig.ApplicationId
             }
         }
         # Validate KeyVault parameters
         if ($PSBoundParameters['StoreLocation'] -eq 'KeyVault')
         {
-            if (-not [string]::IsNullOrEmpty($PSBoundParameters['KeyVaultURI']))
-            {
-                Add-Member -InputObject $MSGAuthInfo  -MemberType NoteProperty -Name KeyVaultURI -Value $KeyVaultURI
-            }
-            else
+            if ([string]::IsNullOrEmpty($PSBoundParameters['KeyVaultURI']))
             {
                 throw 'A KeyVault URI must be supplied'
             }
         }
         #endregion Validation
-        $MSGAuthInfo.TenantDomain = $TenantDomain
-        $MSGAuthInfo.TenantId = $TenantId
-        $MSGAuthInfo.DelegatedCliendId = $MSGConfig.DelegatedCliendId
-        $MSGAuthInfo.DelegateVault = $MSGConfig.DelegateVault
-        $MSGAuthInfo.GraphVersion = $GraphVersion
-        $MSGAuthInfo.ClientId = $ApplicationId
-        $MSGAuthInfo.Environment = $AzureEnvironmentName
-        $MSGAuthInfo.User = $AccountId
-        $MSGAuthInfo.StoreLocation = $StoreLocation
-        $MSGAuthInfo.Initialized = $false
+        $msgEnvironment = $msgEnvironmentTable[$AzureEnvironmentName]
+        $MSGAuthInfo = [PSCustomObject]@{
+            TenantDomain  = $TenantDomain
+            TenantId      = $TenantId
+            GraphVersion  = $GraphVersion
+            ApplicationId = $ApplicationId
+            Environment   = $AzureEnvironmentName
+            User          = $AccountId
+            AuthType      = $Null
+            StoreLocation = $StoreLocation
+            KeyVaultURI   = $KeyVaultURI
+            Initialized   = $isInitialized
+            GraphUrl      = $msgEnvironment[1]
+            Authority     = $msgEnvironment[0]
+        }
 
-        $msgEnvironment = $msgEnvironmentTable[$MSGAuthInfo.Environment]
-        $MSGAuthInfo.GraphUrl = $msgEnvironment[1]
-        $MSGAuthInfo.Authority = $msgEnvironment[0]
         Set-MSGConfig -ConfigObject $MSGAuthInfo
     }
 
@@ -303,7 +290,7 @@ function Connect-MSG
         $MSGAuthInfo = Get-MSGConfig
         $Params = @{
             'Tenant'        = $MSGAuthInfo.TenantId
-            'ClientId'      = $MSGAuthInfo.ClientId
+            'ClientId'      = $MSGAuthInfo.ApplicationId
             'GraphEndPoint' = $MSGAuthInfo.GraphUrl
             'Authority'     = $MSGAuthInfo.Authority
         }
@@ -322,7 +309,10 @@ function Connect-MSG
                     $Params.Add('AccountId', $AccountId)
 
                 }
-                if ($Force) { $Params.Add('Force', $Force) }
+                if ($Force)
+                {
+                    $Params.Add('Force', $Force)
+                }
                 $MSGAuthInfo.AuthType = 'User'
                 Set-MSGConfig -ConfigObject $MSGAuthInfo
                 $res = Get-UserAuthenticationResult @Params
@@ -335,19 +325,19 @@ function Connect-MSG
                 if (-not [string]::IsNullOrEmpty($CertificateThumbprint))
                 {
                     $Params.Add('Thumbprint', $CertificateThumbprint)
-                    Add-Member -InputObject $MSGAuthInfo  -MemberType NoteProperty -Name ThumbPrint -Value  $CertificateThumbprint
+                    Add-Member -InputObject $MSGAuthInfo -MemberType NoteProperty -Name ThumbPrint -Value $CertificateThumbprint
                 }
                 elseif (-not [string]::IsNullOrEmpty($CertificateName))
                 {
                     $Params.Add('CertificateName', $CertificateName)
-                    Add-Member -InputObject $MSGAuthInfo  -MemberType NoteProperty -Name Certificate -Value  $CertificateName
+                    Add-Member -InputObject $MSGAuthInfo -MemberType NoteProperty -Name Certificate -Value $CertificateName
                 }
                 else
                 {
                     throw 'Missing thumbprint or name for certificate to use'
                 }
                 $MSGAuthInfo.AuthType = 'App'
-                $MSGAuthInfo.User = $MSGAuthInfo.ClientId
+                $MSGAuthInfo.User = $MSGAuthInfo.ApplicationId
                 Set-MSGConfig -ConfigObject $MSGAuthInfo
                 $res = Get-AppAuthenticationResult @Params
                 break
@@ -369,7 +359,7 @@ function Connect-MSG
         Set-MSGConfig -ConfigObject $MSGAuthInfo
         if ($MSGAuthInfo.AuthType -eq 'User' -and $null -eq $global:PIMRoleDictionary)
         {
-            Write-Output  'Setting up PIM role information ...'
+            Write-Output 'Setting up PIM role information ...'
             <#
             Yes, I hate using a global variable but the retrieval calls can be expensive so I persist through each invocation of Connect-MSG
             #>
@@ -415,7 +405,14 @@ function Get-MSGCurrentSession
             Scopes       = $scopes -split ' '
             TenantId     = $MSGAuthInfo.TenantId
             TenantDomain = $MSGAuthInfo.TenantDomain
-            AccountType  = if ($MSGAuthInfo.AuthType -eq 'App') { 'ServicePrincipal' } else { $MSGAuthInfo.AuthType }
+            AccountType  = if ($MSGAuthInfo.AuthType -eq 'App')
+            {
+                'ServicePrincipal'
+            }
+            else
+            {
+                $MSGAuthInfo.AuthType
+            }
         }
     }
 }
