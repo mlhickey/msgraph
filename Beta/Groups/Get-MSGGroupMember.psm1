@@ -19,8 +19,10 @@ function Get-MSGGroupMember
     .PARAMETER All
     If true, return all items. If false, return the number of objects specified by the Top parameter
 
-    .PARAMETER Recurse
-    If true, recurse throught nested membership.  This could take a long time.
+    .PARAMETER MembershipType
+    Return membership based on the following query type.  Default is Direct
+        - Direct
+        - Transitive
 
     .PARAMETER CountOnly
     Return the count of objects based on the specified query
@@ -47,70 +49,76 @@ function Get-MSGGroupMember
     https://developer.microsoft.com/en-us/graph/docs/api-reference/beta/api/group_list_members
     #>
 
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     [Alias('Get-MSGGroupMembership')]
     param(
         [Parameter(Mandatory = $true,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the group")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the group')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Search criteria.")]
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Search criteria.')]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Filter",
-            HelpMessage = "OData query filter")]
+            ParameterSetName = 'Filter',
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [string]$Filter,
 
 
-        [Parameter(ParameterSetName = "Id",
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
-        [Parameter(ParameterSetName = "Filter")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'Id',
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
+        [Parameter(ParameterSetName = 'Filter')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$All,
 
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$AdvancedQuery,
 
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "Filter")]
-        [Parameter(ParameterSetName = "Count")]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'Filter')]
+        [Parameter(ParameterSetName = 'Count')]
         [switch]$CountOnly,
 
-        [switch]$Recurse
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'Filter')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(Mandatory = $false,
+            HelpMessage = 'Get either direct or transitive membership for the specified user')]
+        [ValidateSet('Direct', 'Transitive')]
+        [string]$MembershipType = 'Direct'
     )
 
     begin
@@ -118,21 +126,22 @@ function Get-MSGGroupMember
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
 
     process
     {
-        if ($Recurse)
+        if ($MembershipType -match 'Direct')
         {
-            $queryString = "groups/{0}/transitiveMembers" -f $id
+            $queryCmd = 'members'
         }
         else
         {
-            $queryString = "groups/{0}/members" -f $id
+            $queryCmd = 'transitiveMembers'
         }
+        $queryString = 'groups/{0}/{1}' -f $Id, $queryCmd
 
         Get-MSGObject -Type $queryString -All:$All -Filter $queryFilter -CountOnly:$CountOnly
     }
