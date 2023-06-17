@@ -85,65 +85,74 @@
     .LINK
     https://docs.microsoft.com/en-us/graph/api/user-get?view=graph-rest-beta&tabs=http
     #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
-        [Parameter(ParameterSetName = "My")]
+        [Parameter(ParameterSetName = 'My')]
         [ValidateNotNullOrEmpty()]
         [switch]$MyUser,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Search criteria.")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Search criteria.')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Filter",
-            HelpMessage = "OData query filter")]
+            ParameterSetName = 'Filter',
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "My")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'My')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [string]$Filter,
 
-        [Parameter(ParameterSetName = "Id",
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
-        [Parameter(ParameterSetName = "My")]
-        [Parameter(ParameterSetName = "Filter")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'Id',
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
+        [Parameter(ParameterSetName = 'My')]
+        [Parameter(ParameterSetName = 'Filter')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Id',
+            HelpMessage = 'Property to expand. Note that these are case sensitive')]
+        [Parameter(ParameterSetName = 'My')]
+        [Parameter(ParameterSetName = 'Filter')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [ValidateNotNullOrEmpty()]
+        [string]$ExpandProperty,
+
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$All,
 
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$AdvancedQuery,
 
-        [Parameter(ParameterSetName = "Count")]
+        [Parameter(ParameterSetName = 'Count')]
         [switch]$CountOnly
     )
 
@@ -152,7 +161,7 @@
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         # Remove SearchString from lsit because we build an ANR search string for users
         #$null = $PSBoundParameters.Remove("SearchString")
@@ -163,38 +172,38 @@
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 $id = [uri]::EscapeDataString($id)
                 Get-MSGObject -Type "users/$id" -Filter $queryFilter
                 break
             }
-            "my"
+            'my'
             {
-                Get-MSGObject -Type "me" -Filter $queryFilter
+                Get-MSGObject -Type 'me' -Filter $queryFilter
                 break
             }
-            "search"
+            'search'
             {
-                if ($SearchString -match "\w:\w")
+                if ($SearchString -match '\w:\w')
                 {
                     $queryFilter += "`$search=`"$SearchString`""
-                    Get-MSGObject -Type "users"  -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                    Get-MSGObject -Type 'users' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 }
                 else
                 {
-                    Get-MSGObject -Type "users" -SearchString (BuildUserANRSearchString -SearchString $SearchString) -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                    Get-MSGObject -Type 'users' -SearchString (BuildUserANRSearchString -searchString $SearchString) -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 }
                 break
             }
-            { $PSItem -match "topall|filter" }
+            { $PSItem -match 'topall|filter' }
             {
-                Get-MSGObject -Type "users" -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Type 'users' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
-            "count"
+            'count'
             {
-                Get-MSGObject -Type "users" -Filter $queryFilter -CountOnly
+                Get-MSGObject -Type 'users' -Filter $queryFilter -CountOnly
             }
         }
     }

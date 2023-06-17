@@ -14,6 +14,11 @@ function ProcessBoundParams
     {
         $argList += "`$count=true"
     }
+
+    if ($paramList['Expand'])
+    {
+        $argList += "`$expand=$($paramList['Expand'])"
+    }
     # Add support for $search as replacement for startsWith(displayName, $SearchString)
     if ($paramList['SearchString'])
     {
@@ -29,7 +34,7 @@ function ProcessBoundParams
     if (-not [string]::IsNullOrEmpty($paramList['Properties']))
     {
         $propFilter = "`$select="
-        $propFilter += $paramList['Properties'] -join ","
+        $propFilter += $paramList['Properties'] -join ','
         $argList += $propFilter
     }
 
@@ -41,5 +46,5 @@ function ProcessBoundParams
     {
         $argList += "`$top=$($paramList['Top'])"
     }
-    $argList -join "&"
+    $argList -join '&'
 }

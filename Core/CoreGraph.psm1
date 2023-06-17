@@ -84,7 +84,10 @@ function Get-MSGObject
     begin
     {
         $MSGAuthInfo = Get-MSGConfig
-        if ([string]::IsNullOrEmpty($authMode)) { $authMode = $MSGAuthInfo.AuthType }
+        if ([string]::IsNullOrEmpty($authMode))
+        {
+            $authMode = $MSGAuthInfo.AuthType 
+        }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
             throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
@@ -169,7 +172,7 @@ function Get-MSGObject
                     }
                     'SilentlyContinue'
                     {
-                        return $null
+                        return $result.StatusCode
                     }
                 }
             }
@@ -206,7 +209,10 @@ function Get-MSGObject
             {
                 $Objects = $result.value
             }
-            else { $Objects = $result }
+            else
+            {
+                $Objects = $result 
+            }
             # If property sets are specifed then the TypeNames work which enables default
             # output formatting via MSGraph.format.ps1xml doesn't need to happen
             $Objects | ForEach-Object { $_.PSOBject.Properties.Remove('@odata.context') }
@@ -262,7 +268,10 @@ function Get-MSGObjectById
     begin
     {
         $MSGAuthInfo = Get-MSGConfig
-        if ([string]::IsNullOrEmpty($authMode)) { $authMode = $MSGAuthInfo.AuthType }
+        if ([string]::IsNullOrEmpty($authMode))
+        {
+            $authMode = $MSGAuthInfo.AuthType 
+        }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
             throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
@@ -324,7 +333,10 @@ function New-MSGObject
     begin
     {
         $MSGAuthInfo = Get-MSGConfig
-        if ([string]::IsNullOrEmpty($authMode)) { $authMode = $MSGAuthInfo.AuthType }
+        if ([string]::IsNullOrEmpty($authMode))
+        {
+            $authMode = $MSGAuthInfo.AuthType 
+        }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
             throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
@@ -434,7 +446,10 @@ function Set-MSGObject
     begin
     {
         $MSGAuthInfo = Get-MSGConfig
-        if ([string]::IsNullOrEmpty($authMode)) { $authMode = $MSGAuthInfo.AuthType }
+        if ([string]::IsNullOrEmpty($authMode))
+        {
+            $authMode = $MSGAuthInfo.AuthType 
+        }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
             throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
@@ -525,7 +540,10 @@ function Remove-MSGObject
     begin
     {
         $MSGAuthInfo = Get-MSGConfig
-        if ([string]::IsNullOrEmpty($authMode)) { $authMode = $MSGAuthInfo.AuthType }
+        if ([string]::IsNullOrEmpty($authMode))
+        {
+            $authMode = $MSGAuthInfo.AuthType 
+        }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
             throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
@@ -594,7 +612,10 @@ function Get-MSGLinkedObject
     )
 
     $MSGAuthInfo = Get-MSGConfig
-    if ([string]::IsNullOrEmpty($authMode)) { $authMode = $MSGAuthInfo.AuthType }
+    if ([string]::IsNullOrEmpty($authMode))
+    {
+        $authMode = $MSGAuthInfo.AuthType 
+    }
     if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
     {
         throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'

@@ -97,6 +97,14 @@ function Get-MSGGroup
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
+        [Parameter(ParameterSetName = 'Id',
+            HelpMessage = 'Property to expand. Note that these are case sensitive')]
+        [Parameter(ParameterSetName = 'Filter')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [ValidateNotNullOrEmpty()]
+        [string]$ExpandProperty,
+
         [Parameter(ParameterSetName = 'TopAll')]
         [Parameter(ParameterSetName = 'Search')]
         [Parameter(ParameterSetName = 'Filter')]

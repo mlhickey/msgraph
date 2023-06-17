@@ -57,69 +57,77 @@ function Get-MSGApplication
     .LINK
     https://docs.microsoft.com/en-us/graph/api/application-list?view=graph-rest-beta&tabs=http
     #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the object")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the object')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "AppId",
+            ParameterSetName = 'AppId',
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "AppId of the associated application")]
+            HelpMessage = 'AppId of the associated application')]
         [ValidateNotNullOrEmpty()]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId,
 
         [Parameter(
-            ParameterSetName = "Search",
-            HelpMessage = "Search criteria.")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Search criteria.')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(
-            ParameterSetName = "Filter",
-            HelpMessage = "OData query filter")]
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "AppId")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+            ParameterSetName = 'Filter',
+            HelpMessage = 'OData query filter')]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'AppId')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
-        [Parameter(ParameterSetName = "Id",
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
-        [Parameter(ParameterSetName = "AppId")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Id',
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
+        [Parameter(ParameterSetName = 'AppId')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Id',
+            HelpMessage = 'Property to expand. Note that these are case sensitive')]
+        [Parameter(ParameterSetName = 'Filter')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [ValidateNotNullOrEmpty()]
+        [string]$ExpandProperty,
+
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$All,
 
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$AdvancedQuery,
 
-        [Parameter(ParameterSetName = "Count")]
+        [Parameter(ParameterSetName = 'Count')]
         [switch]$CountOnly
     )
 
@@ -128,7 +136,7 @@ function Get-MSGApplication
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -137,12 +145,12 @@ function Get-MSGApplication
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 Get-MSGObject -Type "applications/$id" -Filter $queryFilter
                 break
             }
-            "appid"
+            'appid'
             {
                 if ([string]::IsNullOrEmpty($queryFilter))
                 {
@@ -152,17 +160,17 @@ function Get-MSGApplication
                 {
                     $queryFilter = "appid eq '$AppId'&" + $queryFilter
                 }
-                Get-MSGObject -Type "applications" -Filter $queryFilter
+                Get-MSGObject -Type 'applications' -Filter $queryFilter
                 break
             }
-            { $PSItem -match "topall|search" }
+            { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type "applications" -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Type 'applications' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
-            "count"
+            'count'
             {
-                Get-MSGObject -Type "applications" -Filter $queryFilter -CountOnly
+                Get-MSGObject -Type 'applications' -Filter $queryFilter -CountOnly
             }
         }
     }
