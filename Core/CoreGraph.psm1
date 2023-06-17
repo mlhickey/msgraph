@@ -86,7 +86,7 @@ function Get-MSGObject
         $MSGAuthInfo = Get-MSGConfig
         if ([string]::IsNullOrEmpty($authMode))
         {
-            $authMode = $MSGAuthInfo.AuthType 
+            $authMode = $MSGAuthInfo.AuthType
         }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
@@ -211,12 +211,13 @@ function Get-MSGObject
             }
             else
             {
-                $Objects = $result 
+                $Objects = $result
             }
             # If property sets are specifed then the TypeNames work which enables default
             # output formatting via MSGraph.format.ps1xml doesn't need to happen
             $Objects | ForEach-Object { $_.PSOBject.Properties.Remove('@odata.context') }
             $Objects | ForEach-Object { $_.PSOBject.Properties.Remove('@odata.id') }
+            <#
             if (-not ($filter -match 'select=' -or $filter -match 'expand='))
             #if (-not ($filter -match "expand="))
             {
@@ -232,6 +233,7 @@ function Get-MSGObject
                     }
                 }
             }
+            #>
             $Objects
         } while ($null -ne $nextLink)
     }
@@ -270,7 +272,7 @@ function Get-MSGObjectById
         $MSGAuthInfo = Get-MSGConfig
         if ([string]::IsNullOrEmpty($authMode))
         {
-            $authMode = $MSGAuthInfo.AuthType 
+            $authMode = $MSGAuthInfo.AuthType
         }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
@@ -335,7 +337,7 @@ function New-MSGObject
         $MSGAuthInfo = Get-MSGConfig
         if ([string]::IsNullOrEmpty($authMode))
         {
-            $authMode = $MSGAuthInfo.AuthType 
+            $authMode = $MSGAuthInfo.AuthType
         }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
@@ -448,7 +450,7 @@ function Set-MSGObject
         $MSGAuthInfo = Get-MSGConfig
         if ([string]::IsNullOrEmpty($authMode))
         {
-            $authMode = $MSGAuthInfo.AuthType 
+            $authMode = $MSGAuthInfo.AuthType
         }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
@@ -542,7 +544,7 @@ function Remove-MSGObject
         $MSGAuthInfo = Get-MSGConfig
         if ([string]::IsNullOrEmpty($authMode))
         {
-            $authMode = $MSGAuthInfo.AuthType 
+            $authMode = $MSGAuthInfo.AuthType
         }
         if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
         {
@@ -614,7 +616,7 @@ function Get-MSGLinkedObject
     $MSGAuthInfo = Get-MSGConfig
     if ([string]::IsNullOrEmpty($authMode))
     {
-        $authMode = $MSGAuthInfo.AuthType 
+        $authMode = $MSGAuthInfo.AuthType
     }
     if ($MSGAuthInfo.Initialized -ne $true -and $authMode -eq 'User')
     {

@@ -15,9 +15,9 @@ function ProcessBoundParams
         $argList += "`$count=true"
     }
 
-    if ($paramList['Expand'])
+    if ($paramList['ExpandProperty'])
     {
-        $argList += "`$expand=$($paramList['Expand'])"
+        $argList += "`$expand=$($paramList['ExpandProperty'])"
     }
     # Add support for $search as replacement for startsWith(displayName, $SearchString)
     if ($paramList['SearchString'])
