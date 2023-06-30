@@ -38,7 +38,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- Licenses !-->
         <View>
             <Name>LicenseDetails</Name>
@@ -68,7 +67,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- Group !-->
         <View>
             <Name>Group</Name>
@@ -101,7 +99,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- SignInSummary -->
         <View>
             <Name>SignInSummary</Name>
@@ -139,7 +136,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- Users !-->
         <View>
             <Name>User</Name>
@@ -176,7 +172,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- ServicePrincipals & Applications !-->
         <View>
             <Name>ServicePrincipals</Name>
@@ -364,7 +359,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- Objects -->
         <View>
             <Name>Objects</Name>
@@ -396,7 +390,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- Devices !-->
         <View>
             <Name>Device</Name>
@@ -440,7 +433,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- Security !-->
         <View>
             <Name>Security</Name>
@@ -478,7 +470,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- Account !-->
         <View>
             <Name>Account</Name>
@@ -516,7 +507,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- SKUs !-->
         <View>
             <Name>SKUs</Name>
@@ -554,7 +544,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- Policies !-->
         <View>
             <Name>Policy</Name>
@@ -588,7 +577,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- RoleAssignments !-->
         <View>
             <Name>RoleAssignments</Name>
@@ -725,7 +713,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- DirectoryRoles !-->
         <View>
             <Name>DirectoryRoles</Name>
@@ -756,7 +743,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- HtmlWebResponseObject-->
         <View>
             <Name>HtmlWebResponseObject</Name>
@@ -782,7 +768,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- ReportRecord !-->
         <View>
             <Name>Report</Name>
@@ -826,7 +811,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- SignIn Record-->
         <View>
             <Name>Report</Name>
@@ -872,7 +856,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-
         <!-- administrativeUnits Units -->
         <View>
             <Name>administrativeUnits</Name>
@@ -946,47 +929,6 @@
                 </TableRowEntries>
             </TableControl>
         </View>
-        <View>
-            <Name>AppPermissions</Name>
-            <ViewSelectedBy>
-                <TypeName>MSGraph.AppPermissions</TypeName>
-            </ViewSelectedBy>
-            <TableControl>
-                <TableHeaders>
-                    <TableColumnHeader />
-                    <TableColumnHeader />
-                    <TableColumnHeader />
-                    <TableColumnHeader>
-                        <Width>20</Width>
-                    </TableColumnHeader>
-                    <TableColumnHeader>
-                        <Width>20</Width>
-                    </TableColumnHeader>
-                </TableHeaders>
-                <TableRowEntries>
-                    <TableRowEntry>
-                        <TableColumnItems>
-                            <TableColumnItem>
-                                <PropertyName>AppName</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>AppOwnerList</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>ResourceName</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>AppPermissions</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>DelegatedPermissions</PropertyName>
-                            </TableColumnItem>
-                        </TableColumnItems>
-                    </TableRowEntry>
-                </TableRowEntries>
-            </TableControl>
-        </View>
-
         <View>
             <Name>RiskyUsers</Name>
             <ViewSelectedBy>

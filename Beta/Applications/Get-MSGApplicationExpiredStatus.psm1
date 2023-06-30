@@ -5,7 +5,7 @@ function Get-MSGApplicationExpiredStatus
     Returns applications that are either expired or exceeed the maximum credential period
 
     .DESCRIPTION
-    The Get-MSGApplicationExpiredStatus teturns applications that are either expired or exceeed the maximum credential period
+    The Get-MSGApplicationExpiredStatus returns applications that are either expired or exceeed the maximum credential period
 
     .PARAMETER Id
     Specifies the application iD (objectId) of an application in Azure Active Directory
@@ -31,34 +31,34 @@ function Get-MSGApplicationExpiredStatus
 
     #>
 
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = "ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            ParameterSetName = 'ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "AppId",
-            HelpMessage = "AppId of the application")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            ParameterSetName = 'AppId',
+            HelpMessage = 'AppId of the application')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "SearchString",
-            HelpMessage = "Partial/complete displayname.")]
+            ParameterSetName = 'SearchString',
+            HelpMessage = 'Partial/complete displayname.')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "SearchString")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'SearchString')]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "SearchString")]
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'SearchString')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [switch]$All
     )
 
@@ -67,7 +67,7 @@ function Get-MSGApplicationExpiredStatus
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         $propSet = "`$select=id,appId,passwordCredentials,keyCredentials,displayName,createdDateTime"
@@ -84,48 +84,51 @@ function Get-MSGApplicationExpiredStatus
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
 
-            "appid"
+            'appid'
             {
-                $allAzureItems = Get-MSGObject -Type "applications" -Filter "Appid eq '$AppId'&$propSet"
+                $allAzureItems = Get-MSGObject -Type 'applications' -Filter "Appid eq '$AppId'&$propSet"
                 break
             }
-            "objectid"
+            'objectid'
             {
-                $allAzureItems = Get-MSGObject -Type "applications" -Filter "id eq '$Id'&$propset"
+                $allAzureItems = Get-MSGObject -Type 'applications' -Filter "id eq '$Id'&$propset"
                 break
             }
-            "searchstring"
+            'searchstring'
             {
-                $allAzureItems = Get-MSGObject -Type "applications" -SearchString "startswith(displayName,'$SearchString')" -Filter $propSet -All:$All
+                $allAzureItems = Get-MSGObject -Type 'applications' -SearchString "startswith(displayName,'$SearchString')" -Filter $propSet -All:$All
                 break
             }
-            "topall"
+            'topall'
             {
-                $allAzureItems = Get-MSGObject -Type "applications" -Filter $propSet -All:$All
+                $allAzureItems = Get-MSGObject -Type 'applications' -Filter $propSet -All:$All
                 break
             }
         }
 
         foreach ($item in $allAzureItems)
         {
-            if ($null -eq $item.Id) { continue }
+            if ($null -eq $item.Id)
+            {
+                continue
+            }
 
             $script:itemObjectProperties = [PSCustomObject][Ordered]@{
-                PSTypeName                = "MSGraph.ExpiredStatus"
-                Name                      = "None"
-                Id                        = "None"
-                CreationDate              = "None"
-                OwnerList                 = "None"
-                PassExpiration            = "None"
-                PassThresholdExceededDays = "None"
-                CertExpiration            = "None"
-                CertThresholdExceededDays = "None"
+                PSTypeName                = 'MSGraph.ExpiredStatus'
+                Name                      = 'None'
+                Id                        = 'None'
+                CreationDate              = 'None'
+                OwnerList                 = 'None'
+                PassExpiration            = 'None'
+                PassThresholdExceededDays = 'None'
+                CertExpiration            = 'None'
+                CertThresholdExceededDays = 'None'
             }
 
             if ($item.PasswordCredentials.Count)
             {
                 $results = ProcessCredentials -cObjects $item.PasswordCredentials
-                if ($results.Expiration -ne "None")
+                if ($results.Expiration -ne 'None')
                 {
                     $itemObjectProperties.PassExpiration = $results.Expiration
                     $itemObjectProperties.PassThresholdExceededDays = $results.Threshold
@@ -135,7 +138,7 @@ function Get-MSGApplicationExpiredStatus
             if ($item.KeyCredentials.Count -ge 1)
             {
                 $results = ProcessCredentials -cObjects $item.KeyCredentials
-                if ($results.Expiration -ne "None")
+                if ($results.Expiration -ne 'None')
                 {
                     $itemObjectProperties.CertExpiration = $results.Expiration
                     $itemObjectProperties.CertThresholdExceededDays = $results.Threshold

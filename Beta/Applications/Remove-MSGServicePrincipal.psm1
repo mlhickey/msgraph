@@ -5,7 +5,7 @@ function Remove-MSGServicePrincipal
     Remove service principal
 
     .DESCRIPTION
-    The Remove-MSGServicePrincipal cmdlet will remove the specified serviceprincipa;
+    The Remove-MSGServicePrincipal cmdlet will remove the specified serviceprincipal
 
     .PARAMETER Id
     Specifies the Id (ObjectId) of an service principal in Azure AD.
@@ -26,9 +26,9 @@ function Remove-MSGServicePrincipal
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the application")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the application')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id
     )
 
@@ -37,13 +37,13 @@ function Remove-MSGServicePrincipal
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        if ($PSCmdlet.ShouldProcess("$Id", "Delete serviceprincipal"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Delete serviceprincipal'))
         {
             Remove-MSGObject -Type serviceprincipal -Id $id
         }

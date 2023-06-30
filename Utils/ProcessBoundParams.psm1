@@ -33,8 +33,7 @@ function ProcessBoundParams
     }
     if (-not [string]::IsNullOrEmpty($paramList['Properties']))
     {
-        $propFilter = "`$select="
-        $propFilter += $paramList['Properties'] -join ','
+        $propFilter = "`$select=$($paramList['Properties'] -join ',')"
         $argList += $propFilter
     }
 

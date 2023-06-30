@@ -40,19 +40,19 @@ function Get-MSGApplicationOwner
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = "ObjectId")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            ParameterSetName = 'ObjectId')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "AppId",
-            HelpMessage = "AppId of the application")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            ParameterSetName = 'AppId',
+            HelpMessage = 'AppId of the application')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties
     )
@@ -62,13 +62,12 @@ function Get-MSGApplicationOwner
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         if (-not [string]::IsNullOrEmpty($properties))
         {
-            $propFilter = "`$select="
-            $propFilter += $properties -join ","
+            $propFilter = "`$select=$($properties -join ',')"
         }
     }
 
@@ -77,7 +76,7 @@ function Get-MSGApplicationOwner
 
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "appid"
+            'appid'
             {
                 $id = (Get-MSGApplication -AppId $AppId -Properties id).Id
                 break
@@ -86,7 +85,7 @@ function Get-MSGApplicationOwner
 
         if ($nuill -eq $id)
         {
-            throw "Either an objectId or appId is required"
+            throw 'Either an objectId or appId is required'
         }
 
         Get-MSGObject -Type "applications/$id/owners" -Filter $propFilter

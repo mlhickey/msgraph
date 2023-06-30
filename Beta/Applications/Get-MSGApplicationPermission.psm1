@@ -7,7 +7,7 @@ function BuildPermissionTable
 {
     param(
         [Parameter(Mandatory = $True)]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId,
 
         [Parameter(Mandatory = $True)]
@@ -20,8 +20,14 @@ function BuildPermissionTable
     if (-not $Table.ContainsKey($AppId))
     {
         $Roles | Select-Object Id, Value | ForEach-Object { $perm.Add($_.Id, $_.value) }
-        try { $Table.Add($AppId, $perm) }
-        catch { Write-Warning "AddPermissionTable: Failed to add perms to ${appId}"; return $null }
+        try
+        {
+            $Table.Add($AppId, $perm)
+        }
+        catch
+        {
+            Write-Warning "AddPermissionTable: Failed to add perms to ${appId}"; return $null
+        }
     }
 }
 function GetPermissionList
@@ -29,8 +35,8 @@ function GetPermissionList
     param(
         [Parameter(Mandatory = $True)]
         [ValidateSet(
-            "Role",
-            "Scope")]
+            'Role',
+            'Scope')]
         [string]$PermType,
 
         [Parameter(Mandatory = $True)]
@@ -39,22 +45,25 @@ function GetPermissionList
 
     switch ($PermType)
     {
-        "Role"
+        'Role'
         {
             $Table = $appPermissionTable
-            $RoleProperty = "AppRoles"
+            $RoleProperty = 'AppRoles'
         }
-        "Scope"
+        'Scope'
         {
             $Table = $oauthPermissionTable
-            $RoleProperty = "publishedPermissionScopes"
+            $RoleProperty = 'publishedPermissionScopes'
         }
-        default { return $null }
+        default
+        {
+            return $null
+        }
     }
     #
     # Need to handle old portal case where they collapsed Role and Scope into a comma-separated value
     #
-    $resourceList = ($resource.ResourceAccess.Where( { $_.Type -eq $PermType -or $_.Type -eq "Role,Scope" }))
+    $resourceList = ($resource.ResourceAccess.Where( { $_.Type -eq $PermType -or $_.Type -eq 'Role,Scope' }))
     #
     # Create list of names, join final set with "|"
     #
@@ -65,11 +74,11 @@ function GetPermissionList
     }
     if ($plist.Count -gt 0)
     {
-        ($plist -join "|")
+        ($plist -join '|')
     }
     else
     {
-        "None"
+        'None'
     }
 }
 function GetPermissionName
@@ -79,7 +88,7 @@ function GetPermissionName
         [hashtable]$Table,
 
         [Parameter(Mandatory = $True)]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId,
 
         [Parameter(Mandatory = $True)]
@@ -91,11 +100,23 @@ function GetPermissionName
 
     if (-not $Table.ContainsKey($AppId))
     {
-        try { $sp = Get-MSGObject -Type servicePrincipals -Filter "Appid eq '$AppId'" }
-        catch { $sp = $null }
+        try
+        {
+            $sp = Get-MSGObject -Type servicePrincipals -Filter "Appid eq '$AppId'"
+        }
+        catch
+        {
+            $sp = $null
+        }
 
-        if ($null -eq $sp.Id) { return "unresolved" }
-        if (-not $resourceAppidToName.Contains($AppId)) { $resourceAppidToName.Add($AppId, $sp.displayName) }
+        if ($null -eq $sp.Id)
+        {
+            return 'unresolved'
+        }
+        if (-not $resourceAppidToName.Contains($AppId))
+        {
+            $resourceAppidToName.Add($AppId, $sp.displayName)
+        }
         BuildPermissionTable -AppId $AppId -Roles $sp.$RoleProperty -Table $Table
     }
     $permList = $Table.Item($AppId)
@@ -105,27 +126,32 @@ function GetResourceName
 {
     param(
         [Parameter(Mandatory = $True)]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId
     )
-    $resourceAppidToName.Item($AppId)
+    if (-not $resourceAppidToName.Contains($AppId))
+    {
+        $sp = Get-MSGObject -Type servicePrincipals -Filter "Appid eq '$AppId'"
+        $resourceAppidToName.Add($AppId, $sp.displayName)
+    }
+    $resourceAppidToName[$AppId]
 }
 
 function GetAppConsentedPermissions
 {
     param(
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId
     )
 
     $resId = (Get-MSGServicePrincipal -AppId $AppId).Id
 
-    $list = @((Get-MSGServicePrincipalAppRoleAssignment -Id $Id).Where( { $_.resourceId -eq $resId }) | Select-Object -Unique appRoleName).appRoleName
+    $list = @(Get-MSGServicePrincipalAppRoleAssignment -Id $Id | Where-Object { $_.resourceId -eq $resId } | Select-Object -Unique appRoleName).appRoleName
     if ($list.Count -gt 0)
     {
-        ($list -join "|")
+        ($list -join '|')
     }
     else
     {
@@ -136,16 +162,16 @@ function GetConsentedPermissions
 {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
     param(
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId
     )
 
-    $resource = @((Get-MSGServicePrincipalOAuth2PermissionGrant -Id $Id) | Where-Object { $_.consentType -eq "AllPrincipals" -and $_.resourceId -eq "$AppId" }) | Select-Object -Unique resourceId, scope
+    $resource = @((Get-MSGServicePrincipalOAuth2PermissionGrant -Id $Id) | Where-Object { $_.consentType -eq 'AllPrincipals' -and $_.resourceId -eq "$AppId" }) | Select-Object -Unique resourceId, scope
     if (-not [string]::IsNullOrEmpty($resource.scope))
     {
-        ($resource.scope.Replace(" ", "|"))
+        ($resource.scope.Replace(' ', '|'))
     }
     else
     {
@@ -165,8 +191,14 @@ function GetCredentialExpiration
 
     foreach ($cred in $cObjects)
     {
-        if (($cred.endDateTime -le $expiresOn) -or ($cred.startDateTime -gt $today)) { continue }
-        elseif ($cred.endDateTime -gt $expiresOn) { $expiresOn = $cred.endDateTime }
+        if (($cred.endDateTime -le $expiresOn) -or ($cred.startDateTime -gt $today))
+        {
+            continue
+        }
+        elseif ($cred.endDateTime -gt $expiresOn)
+        {
+            $expiresOn = $cred.endDateTime
+        }
     }
     [datetime]$expiresOn
 }
@@ -179,28 +211,34 @@ function ProcessCredentials
     )
 
     $propSet = [PSCustomObject][Ordered]@{
-        Expiration = "None"
-        Threshold  = "None"
+        Expiration = 'None'
+        Threshold  = 'None'
     }
 
     $today = Get-Date
-    if (-not $cObjects) { return $propset }
+    if (-not $cObjects)
+    {
+        return $propset
+    }
     $date = GetCredentialExpiration -cObjects $cObjects
 
-    if ($date -gt $today) { $delta = ($date - $today) }
+    if ($date -gt $today)
+    {
+        $delta = ($date - $today)
+    }
     if (($date -le $today) -or
         ($date -gt $today -and ($delta.days -lt $MinLifetime -or $delta.days -gt $MaxLifetime)))
     {
 
         if ($delta.days -gt $MaxLifetime)
         {
-            $propSet.Expiration = "ThresholdExceeded"
+            $propSet.Expiration = 'ThresholdExceeded'
             $propSet.Threshold = $delta.days
         }
         else
         {
             $propSet.Expiration = $date
-            $propSet.Threshold = "None"
+            $propSet.Threshold = 'None'
         }
     }
     ($propSet)
@@ -219,7 +257,7 @@ function GetOwnerList
     param(
         [Parameter(Mandatory = $True)]
         [ValidateNotNullOrEmpty()]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id
     )
     # Get registered application owners
@@ -236,13 +274,13 @@ function GetOwnerList
             $ownerList += $o.displayName
             $upnList += $o.userPrincipalName
         }
-        $ownerList = $ownerList -join "|"
-        $upnList = $upnList -join "|"
+        $ownerList = $ownerList -join '|'
+        $upnList = $upnList -join '|'
     }
     else
     {
-        $ownerList = "None"
-        $upnList = "None"
+        $ownerList = 'None'
+        $upnList = 'None'
     }
     $ownerObject = @{
         OwnerList = $ownerList
@@ -266,7 +304,7 @@ function GetApplicationAssignmentList
     param(
         [Parameter(Mandatory = $True)]
         [ValidateNotNullOrEmpty()]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id
     )
 
@@ -327,34 +365,34 @@ function Get-MSGApplicationPermission
     Reporting API Application None         Windows Azure Active Directory Directory.Read.All User.Read
 
     #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
             Position = 0,
             ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = "AppId",
-            HelpMessage = "AppId of the application")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            ParameterSetName = 'AppId',
+            HelpMessage = 'AppId of the application')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "ObjectId",
+            ParameterSetName = 'ObjectId',
             ValueFromPipelineByPropertyName = $true)]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "SearchString",
-            HelpMessage = "Partial/complete displayname of the applications.")]
+            ParameterSetName = 'SearchString',
+            HelpMessage = 'Partial/complete displayname of the applications.')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "SearchString")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'SearchString')]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "SearchString")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'SearchString')]
         [switch]$All,
 
         [Parameter(Mandatory = $false)]
@@ -366,7 +404,7 @@ function Get-MSGApplicationPermission
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $propSet = "`$select=id,appId,passwordCredentials,keyCredentials,displayName,createdDateTime,RequiredResourceAccess"
         if (-not $All)
@@ -380,22 +418,22 @@ function Get-MSGApplicationPermission
         $Error.Clear()
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "appid"
+            'appid'
             {
                 $allAzureApplications = Get-MSGObject -Type applications -Filter "Appid eq '$AppId'&$propSet"
                 break
             }
-            "objectid"
+            'objectid'
             {
                 $allAzureApplications = Get-MSGObject -Type applications -Filter "id eq '$Id'&$propset"
                 break
             }
-            "searchstring"
+            'searchstring'
             {
                 $allAzureApplications = Get-MSGObject -Type applications -SearchString "startswith(displayName,'$SearchString')" -Filter $propSet -All:$All
                 break
             }
-            "topall"
+            'topall'
             {
                 $allAzureApplications = Get-MSGObject -Type applications -Filter $propSet -All:$All
             }
@@ -405,7 +443,10 @@ function Get-MSGApplicationPermission
         {
             #
             # See if we have any work to do
-            if ($null -eq $application.Id) { continue }
+            if ($null -eq $application.Id)
+            {
+                continue
+            }
 
             $RequiredResourceAccess = $application.RequiredResourceAccess
             if ($RequiredResourceAccess.Count -eq 0)
@@ -425,21 +466,21 @@ function Get-MSGApplicationPermission
                 $assignmentList = @(GetApplicationAssignmentList -Id $associatedServicePrincipal.Id)
             }
             # If we're only looking for consented applications and there isn't an assignment list then we're done
-            if ($Consented -and $null -eq $assignmentList) { continue }
+            if ($Consented -and $null -eq $assignmentList)
+            {
+                continue
+            }
 
             $owners = GetOwnerList -Id $application.Id
             $appObjectProperties = [PSCustomObject][Ordered]@{
-                PSTypeName                 = "MSGraph.AppPermissions"
-                appDisplayName             = $application.displayName
-                appId                      = $application.appId
-                appCreationDate            = $application.createdDateTime
-                appOwnerList               = $owners.upnList
-                resourceName               = "None"
-                resourceAppId              = "None"
-                appPermissions             = "None"
-                delegatedPermissions       = "None"
-                appSecretExpiration        = "None"
-                appKeyCredentialExpiration = "None"
+                PSTypeName                 = 'MSGraph.AppPermissions'
+                DisplayName                = $application.displayName
+                AppId                      = $application.appId
+                CreationDate               = $application.createdDateTime
+                OwnerList                  = $owners.upnList
+                ResourceList               = @()
+                AppSecretExpiration        = 'None'
+                AppKeyCredentialExpiration = 'None'
                 SPSecretExpiration         = 'None'
                 SPKeyCredentialExpiration  = 'None'
             }
@@ -474,7 +515,6 @@ function Get-MSGApplicationPermission
             {
                 $appPermission = $null
                 $userPermission = $null
-                $resourceName = GetResourceName -AppId $resource.ResourceAppId
                 $resourceSP = Get-MSGServicePrincipal -AppId $resource.ResourceAppId
 
                 if ($null -ne $assignmentList -and $assignmentList.Contains($resourceSP.id))
@@ -486,23 +526,25 @@ function Get-MSGApplicationPermission
                     }
                     else
                     {
-                        $appPermission = GetPermissionList -resource $resource -PermType "Role"
-                        $userPermission = GetPermissionList -resource $resource -PermType "Scope"
+                        $appPermission = GetPermissionList -resource $resource -PermType 'Role'
+                        $userPermission = GetPermissionList -resource $resource -PermType 'Scope'
                     }
                 }
-
+                $resourceName = GetResourceName -AppId $resource.ResourceAppId
                 if ($Consented -and ($null -eq $appPermission -and $null -eq $userPermission))
                 {
                     Write-Verbose "$($application.displayName) has no consented permissions, skipping"
                     continue
                 }
-
-                $appObjectProperties.ResourceName = $resourceName
-                $appObjectProperties.resourceAppId = $resource.ResourceAppId
-                $appObjectProperties.AppPermissions = $appPermission
-                $appObjectProperties.DelegatedPermissions = $userPermission
-                $appObjectProperties
+                $resInfo = [PSCustomObject][Ordered]@{
+                    ResourceName         = $resourceName
+                    ResourceAppId        = $resource.ResourceAppId
+                    AppPermissions       = $appPermission
+                    DelegatedPermissions = $userPermission
+                }
+                $appObjectProperties.ResourceList += $resInfo
             }
+            $appObjectProperties
         }
     }
 }

@@ -26,13 +26,6 @@ function Get-MSGDomain
     .PARAMETER All
     If true, return all items. If false, return the number of objects specified by the Top parameter
 
-    .PARAMETER CountOnly
-    Return the count of objects based on the specified query
-
-    .EXAMPLE
-     (Get-MSGDomains).Count
-    322
-
     .EXAMPLE
     Get-MSGDomain -DomainName microsoft.com
 
@@ -43,50 +36,47 @@ function Get-MSGDomain
     .LINK
     https://docs.microsoft.com/en-us/graph/api/domain-list?view=graph-rest-beta&tabs=http
     #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Domain name")]
+            HelpMessage = 'Domain name')]
         [string]$DomainName,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Search criteria.")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Search criteria.')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Count")]
+            HelpMessage = 'OData query filter')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Count')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            ParameterSetName = 'Id',
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [Parameter(Mandatory = $false)]
-        [switch]$All,
-
-        [Parameter(ParameterSetName = "Count")]
-        [switch]$CountOnly
+        [switch]$All
     )
 
     begin
@@ -94,7 +84,7 @@ function Get-MSGDomain
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -103,20 +93,16 @@ function Get-MSGDomain
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 Get-MSGObject -Type "domains/$DomainName" -Filter $queryFilter
                 break
             }
 
-            { $PSItem -match "topall|search" }
+            { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type "domains" -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Type 'domains' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
-            }
-            "count"
-            {
-                Get-MSGObject -Type "domains" -Filter $queryFilter -CountOnly
             }
         }
     }

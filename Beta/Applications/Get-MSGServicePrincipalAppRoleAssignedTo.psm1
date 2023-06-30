@@ -31,42 +31,42 @@ function Get-MSGServicePrincipalAppRoleAssignedTo
     .LINK
     https://docs.microsoft.com/en-us/graph/api/serviceprincipal-list-approleassignments?view=graph-rest-beta&tabs=http
     #>
-    [CmdletBinding(DefaultParameterSetName = "Id")]
+    [CmdletBinding(DefaultParameterSetName = 'Id')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the object")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
-[string]$Id,
+            HelpMessage = 'ObjectId of the object')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
+        [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "AppId",
+            ParameterSetName = 'AppId',
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "AppId of the associated application")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
-[string]$AppId,
+            HelpMessage = 'AppId of the associated application')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
+        [string]$AppId,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Partial/complete displayname of the object.")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Partial/complete displayname of the object.')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
-        [string[]]$Properties = @("id"),
+        [string[]]$Properties = @('id'),
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [int]$Top = 100
     )
 
@@ -75,7 +75,7 @@ function Get-MSGServicePrincipalAppRoleAssignedTo
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -85,12 +85,12 @@ function Get-MSGServicePrincipalAppRoleAssignedTo
 
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 $res = Get-MSGObject -Type "servicePrincipals/$id" -Filter $queryFilter
                 break
             }
-            "appid"
+            'appid'
             {
 
                 if ([string]::IsNullOrEmpty($queryFilter))
@@ -101,21 +101,24 @@ function Get-MSGServicePrincipalAppRoleAssignedTo
                 {
                     $queryFilter = @("Appid eq '$AppId'", $queryFilter) -join '&'
                 }
-                $res = Get-MSGObject -Type "servicePrincipals" -Filter $queryFilter
+                $res = Get-MSGObject -Type 'servicePrincipals' -Filter $queryFilter
                 break
             }
-            "search"
+            'search'
             {
-                $res = Get-MSGObject -Type "servicePrincipals" -Filter $queryFilter -All:$All
+                $res = Get-MSGObject -Type 'servicePrincipals' -Filter $queryFilter -All:$All
                 break
             }
             default
             {
-                Write-Warning "You must specify either an ObjectId or a searchable string"
+                Write-Warning 'You must specify either an ObjectId or a searchable string'
                 return $null
             }
         }
-        if ($res.StatusCode -ge 400) { return $res }
+        if ($res.StatusCode -ge 400)
+        {
+            return $res
+        }
         foreach ($r in $res)
         {
             Get-MSGObject -Type "servicePrincipals/$($r.id)/appRoleAssignedTo" -All

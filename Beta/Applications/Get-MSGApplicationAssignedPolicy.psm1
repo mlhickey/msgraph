@@ -14,7 +14,8 @@ function Get-MSGApplicationAssignedPolicy
     Specifies the type of policy to retrieve - TokenLifeTime or TokenIssuance
 
     .LINK
-    https://docs.microsoft.com/en-us/graph/api/policy-list-assigned?view=graph-rest-beta
+    https://learn.microsoft.com/en-us/graph/api/resources/tokenissuancepolicy?view=graph-rest-beta
+    https://learn.microsoft.com/en-us/graph/api/application-list-tokenlifetimepolicies?view=graph-rest-beta&tabs=http
 
     #>
     [CmdletBinding()]
@@ -23,19 +24,19 @@ function Get-MSGApplicationAssignedPolicy
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the application")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the application')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
             Position = 1,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Policy type: TokenLifetime or TokenIssuance")]
+            HelpMessage = 'Policy type: TokenLifetime or TokenIssuance')]
         [ValidateNotNullOrEmpty()]
-        [ValidateSet("TokenLifetime", "TokenIssuance")]
-        [string]$PolicyType = "TokenLifetime"
+        [ValidateSet('TokenLifetime', 'TokenIssuance')]
+        [string]$PolicyType = 'TokenLifetime'
     )
 
     begin
@@ -43,15 +44,18 @@ function Get-MSGApplicationAssignedPolicy
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        $type = "{0}Policies" -f (camelCase $PolicyType)
+        $type = '{0}Policies' -f (camelCase $PolicyType)
         $res = Get-MSGObject -Type "applications/$Id/$type"
-        if ($res.StatusCode -ge 400) { return $res }
+        if ($res.StatusCode -ge 400)
+        {
+            return $res 
+        }
         $res.appRoleAssignments
     }
 }

@@ -16,7 +16,6 @@ function Get-MSGDirectoryRole
     .EXAMPLE
     Get-MSGDirectoryRole
 
-
     Id                                   DisplayName                                Description
     --                                   -----------                                -----------
     09a00969-e732-4ebe-ba46-e6a6d9aace30 Search Editor                              Can create and manage the editorial content such as bookmarks, Q and As, locations, floorplan.
@@ -31,18 +30,18 @@ function Get-MSGDirectoryRole
      https://docs.microsoft.com/en-us/graph/api/directoryrole-list?view=graph-rest-beta&tabs=http
 
   #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the role")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the role')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )
@@ -52,7 +51,7 @@ function Get-MSGDirectoryRole
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -60,14 +59,14 @@ function Get-MSGDirectoryRole
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 Get-MSGObject -Type "directoryRoles/$Id"
                 break
             }
-            "topall"
+            'topall'
             {
-                Get-MSGObject -Type "directoryRoles" -All:$All
+                Get-MSGObject -Type 'directoryRoles' -All:$All
                 break
             }
         }
