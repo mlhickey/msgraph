@@ -217,12 +217,13 @@ function Get-MSGObject
             # output formatting via MSGraph.format.ps1xml doesn't need to happen
             $Objects | ForEach-Object { $_.PSOBject.Properties.Remove('@odata.context') }
             $Objects | ForEach-Object { $_.PSOBject.Properties.Remove('@odata.id') }
-            <#
-            if (-not ($filter -match 'select=' -or $filter -match 'expand='))
-            #if (-not ($filter -match "expand="))
-            {
-                $Objects | ForEach-Object {
-                    $type = $_.'@odata.type'
+            #if (-not ($filter -match 'select=' -or $filter -match 'expand='))
+            $addType = -not ($filter -match 'select=' -or $filter -match 'expand=')
+            $Objects | ForEach-Object {
+                $type = $_.'@odata.type'
+                $_.PSObject.Properties.Remove('@odata.type')
+                if ($addType)
+                {
                     if ([string]::IsNullOrEmpty($type))
                     {
                         $_.PSOBject.TypeNames.Insert(0, $objectType.Trim())
@@ -233,7 +234,6 @@ function Get-MSGObject
                     }
                 }
             }
-            #>
             $Objects
         } while ($null -ne $nextLink)
     }
