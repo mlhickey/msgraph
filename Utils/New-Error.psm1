@@ -18,7 +18,7 @@ function New-Error
     )
 
     $callingFunction = [string](Get-PSCallStack)[1].Command
-    $id = $ErrorObject.FullError.FullyQualifiedErrorId
+    $id = (New-Guid).guid
     $msg = @{}
 
     if (-not [string]::IsNullOrEmpty($ErrorObject.FullError.ErrorDetails))
@@ -27,32 +27,31 @@ function New-Error
     }
     if (-not [string]::IsNullOrEmpty($AdditionalInfo))
     {
-        $emsg = "{0}: {1}" -f $AdditionalInfo, $ErrorObject.Message
+        $emsg = '{0}: {1}' -f $AdditionalInfo, $ErrorObject.Exception.Message
     }
     else
     {
         $emsg = $ErrorObject.Message
     }
     $msg = "
-`rStatusCode: $($ErrorObject.StatusCode)
-`rCode: $($ErrorObject.code)
-`rType: $($ErrorObject.Type)
+`rStatusCode: $($ErrorObject.Exception.Response.StatusCode)
+`rCode: $($ErrorObject.Exception.Response.StatusDescription)
+`rType: $($ErrorObject.Exception.Status)
 `rMessage: $emsg
-`rRequestId: $($ErrorObject.RequestId)
-`rDateTimeStamp: $($ErrorObject.DateTimeStamp)"
+`rDateTimeStamp: $($ErrorObject.Exception.Response.LastModified.ToString('yyyy-MM-ddTHH:mm:ssZ'))"
     if ($null -ne $ErrorObject.diagnostics)
     {
         $msg += "`rx-ms-ags-diagnostic: $($ErrorObject.diagnostics.ServerInfo)"
     }
 
-    if (-not $Target)
+    if ([string]::IsNullOrEmpty($Target))
     {
         $Target = $callingFunction
     }
     $msg += "`rTarget: $Target"
 
     $exc = New-Object System.Exception $msg, $ErrorObject.FullError.Exception
-    $ret = New-Object Management.Automation.ErrorRecord $exc, $id, "NotSpecified", $Target
+    $ret = New-Object Management.Automation.ErrorRecord $exc, $id, 'NotSpecified', $Target
 
     $ret
 }

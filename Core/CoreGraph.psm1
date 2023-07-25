@@ -62,7 +62,7 @@ function Get-MSGObject
 
         [Parameter(Mandatory = $false)]
         [ValidateSet('User', 'App', 'Delegated', 'Ignore')]
-        [string]$authMode,
+        [string]$authMode = 'User',
 
         [Parameter(Mandatory = $false)]
         [ValidateSet('GET', 'POST', ignorecase = $true)]
@@ -159,24 +159,30 @@ function Get-MSGObject
             $nextLink = $null
 
             $result = Invoke-SafeWebRequest @Params
-
-            if ($result.StatusCode -ge 400)
+            #region ErrorProcessing
+            if ($result.Exception.Response.StatusCode -ge 400)
             {
+                #$ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim() -Target $([string](Get-PSCallStack)[1].Command)
                 switch ($ErrorActionPreference)
                 {
                     'Continue'
                     {
-                        $ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim()
-                        Write-Error -ErrorRecord $ex
-                        return
+                        Write-Error -ErrorRecord $result
+                        return [PSCustomObject]@{
+                            StatusCode = $result.Exception.Response.StatusCode
+                        }
                     }
                     'SilentlyContinue'
                     {
-                        return $result.StatusCode
+                        return $null
+                    }
+                    'Stop'
+                    {
+                        throw $result
                     }
                 }
             }
-
+            #endregion ErrorProcessing
             if ($null -eq $result)
             {
                 return $result
@@ -291,22 +297,30 @@ function Get-MSGObjectById
 
         $result = Get-MSGObject -Type 'directoryObjects/getByIds' -Method POST -Body $body -Filter $Filter
 
-        if ($result.StatusCode -ge 400)
+        #region ErrorProcessing
+        if ($result.Exception.Response.StatusCode -ge 400)
         {
+            #$ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim() -Target $([string](Get-PSCallStack)[1].Command)
             switch ($ErrorActionPreference)
             {
                 'Continue'
                 {
-                    $ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim()
-                    Write-Error -ErrorRecord $ex
-                    return
+                    Write-Error -ErrorRecord $result
+                    return [PSCustomObject]@{
+                        StatusCode = $result.Exception.Response.StatusCode
+                    }
                 }
                 'SilentlyContinue'
                 {
                     return $null
                 }
+                'Stop'
+                {
+                    throw $result
+                }
             }
         }
+        #endregion ErrorProcessing
         $result
     }
 }
@@ -361,22 +375,30 @@ function New-MSGObject
 
         $result = Invoke-SafeWebRequest -Method POST -Uri $uri -Headers $fullHeader -Body $jsonBody -AuthMode $authMode
 
-        if ($result.StatusCode -ge 400)
+        #region ErrorProcessing
+        if ($result.Exception.Response.StatusCode -ge 400)
         {
+            #$ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim() -Target $([string](Get-PSCallStack)[1].Command)
             switch ($ErrorActionPreference)
             {
                 'Continue'
                 {
-                    $ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim()
-                    Write-Error -ErrorRecord $ex
-                    return
+                    Write-Error -ErrorRecord $result
+                    return [PSCustomObject]@{
+                        StatusCode = $result.Exception.Response.StatusCode
+                    }
                 }
                 'SilentlyContinue'
                 {
                     return $null
                 }
+                'Stop'
+                {
+                    throw $result
+                }
             }
         }
+        #endregion ErrorProcessing
 
         if ($null -ne $result)
         {
@@ -486,22 +508,30 @@ function Set-MSGObject
 
         $result = Invoke-SafeWebRequest -Method $Method -Uri $uri -Headers $fullHeader -Body $jsonBody -AuthMode $authMode
 
-        if ($result.StatusCode -ge 400)
+        #region ErrorProcessing
+        if ($result.Exception.Response.StatusCode -ge 400)
         {
+            #$ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim() -Target $([string](Get-PSCallStack)[1].Command)
             switch ($ErrorActionPreference)
             {
                 'Continue'
                 {
-                    $ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim()
-                    Write-Error -ErrorRecord $ex
-                    return
+                    Write-Error -ErrorRecord $result
+                    return [PSCustomObject]@{
+                        StatusCode = $result.Exception.Response.StatusCode
+                    }
                 }
                 'SilentlyContinue'
                 {
                     return $null
                 }
+                'Stop'
+                {
+                    throw $result
+                }
             }
         }
+        #endregion ErrorProcessing
 
         if ($null -ne $result)
         {
@@ -561,19 +591,23 @@ function Remove-MSGObject
     {
         $result = Invoke-SafeWebRequest -Method Delete -Uri $uri -Headers $fullHeader -AuthMode $authMode
 
-        if ($result.StatusCode -ge 400)
+        if ($result.Exception.Response.StatusCode -ge 400)
         {
+            #$ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim()
             switch ($ErrorActionPreference)
             {
                 'Continue'
                 {
-                    $ex = New-Error -ErrorObject $result -AdditionalInfo $Type.Trim()
-                    Write-Error -ErrorRecord $ex
+                    Write-Error -ErrorRecord $result
                     return
                 }
                 'SilentlyContinue'
                 {
                     return $null
+                }
+                'Stop'
+                {
+                    throw $result
                 }
             }
         }

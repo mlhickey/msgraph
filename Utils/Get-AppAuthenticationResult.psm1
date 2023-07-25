@@ -11,7 +11,7 @@ function Get-AppAuthenticationResult
         [string]$tenant,
 
         [Parameter(Mandatory = $true)]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$clientId,
 
         [Parameter(Mandatory = $false)]
@@ -25,9 +25,9 @@ function Get-AppAuthenticationResult
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [ValidateSet(
-            "LocalMachine",
-            "CurrentUser",
-            "KeyVault")]
+            'LocalMachine',
+            'CurrentUser',
+            'KeyVault')]
         [string]$StoreLocation,
 
         [Parameter(Mandatory = $true)]
@@ -59,37 +59,37 @@ function Get-AppAuthenticationResult
         {
             $authHeader = $null
             $Params = [ordered]@{
-                "EndPoint"               = $graphEndPoint
-                "TenantDomain"           = $tenant
-                "ClientId"               = $clientId
-                "AuthType"               = "Application"
-                "StoreLocation"          = $StoreLocation
-                "AuthenticationEndpoint" = $authority
+                'EndPoint'               = $graphEndPoint
+                'TenantDomain'           = $tenant
+                'ClientId'               = $clientId
+                'AuthType'               = 'Application'
+                'StoreLocation'          = $StoreLocation
+                'AuthenticationEndpoint' = $authority
             }
 
-            if ($StoreLocation.ToLower() -eq "keyvault")
+            if ($StoreLocation.ToLower() -eq 'keyvault')
             {
                 if ([string]::IsNullOrEmpty($KeyVaultURI))
                 {
                     if ([string]::IsNullOrEmpty($MSGAuthInfo.KeyVaultURI))
                     {
-                        throw "Missing Keyvault URI"
+                        throw 'Missing Keyvault URI'
                     }
                     else
                     {
                         $KeyVaultURI = $MSGAuthInfo.KeyVaultURI
                     }
                 }
-                $Params.Add("KeyVaultURI", $KeyVaultURI)
+                $Params.Add('KeyVaultURI', $KeyVaultURI)
             }
 
             if (-not [string]::IsNullOrEmpty($thumbPrint))
             {
-                $Params.Add("Thumbprint", $thumbPrint)
+                $Params.Add('Thumbprint', $thumbPrint)
             }
             elseif (-not [string]::IsNullOrEmpty($certificateName))
             {
-                $Params.Add("CertificateName", $certificateName)
+                $Params.Add('CertificateName', $certificateName)
             }
 
             try
@@ -119,7 +119,7 @@ function Get-AppAuthenticationResult
                 $MSGAuthInfo.TenantId = $authResult.TenantId
             }
             $MSGAuthInfo.Initialized = $true
-            Set-MSGConfig -ConfigObject $MSGAuthInfo
+            #Set-MSGConfig -ConfigObject $MSGAuthInfo
         }
         return $authHeader
     }

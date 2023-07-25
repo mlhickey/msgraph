@@ -12,13 +12,21 @@ function Set-MSGConfig
         $null = New-Item -Path $ConfigPath -ItemType Directory
     }
     $ConfigPath += '\config.csv'
+    $fileLock = [System.Threading.ReaderWriterLockSlim]::new()
 
-    try
+    if ($fileLock.TryEnterWriteLock(($global:_MSGMaxRetry * 5)))
     {
-        $null = ($configObject | Export-Csv -Path $ConfigPath -NoTypeInformation)
-    }
-    catch
-    {
-        throw 'Unable to save config'
+        try
+        {
+            $configObject | Export-Csv -Path $ConfigPath -NoTypeInformation
+        }
+
+        finally
+        {
+            if ($fileLock.IsWriteLockHeld)
+            {
+                $fileLock.ExitWriteLock()
+            }
+        }
     }
 }

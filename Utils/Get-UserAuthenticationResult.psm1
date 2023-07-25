@@ -115,7 +115,7 @@ function Get-UserAuthenticationResult
             $MSGAuthInfo.user = $MSGAuthResult.Account.Username
         }
         $MSGAuthInfo.Initialized = $true
-        Set-MSGConfig -ConfigObject $MSGAuthInfo
+        #Set-MSGConfig -ConfigObject $MSGAuthInfo
         $authHeader = $MSGAuthResult.CreateAuthorizationHeader()
     }
 

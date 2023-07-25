@@ -29,26 +29,26 @@ function Get-MSGApplicationCredential
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the application or Application.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the application or Application.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "AppId of the application")]
+            HelpMessage = 'AppId of the application')]
         [ValidateNotNullOrEmpty()]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "Type of credential: PasswordCredentials, KeyCredentials or All")]
+            HelpMessage = 'Type of credential: PasswordCredentials, KeyCredentials or All')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet(
-            "PasswordCredentials",
-            "KeyCredentials",
-            "All")]
-        [string]$Type = "All"
+            'PasswordCredentials',
+            'KeyCredentials',
+            'All')]
+        [string]$Type = 'All'
     )
 
     begin
@@ -56,22 +56,21 @@ function Get-MSGApplicationCredential
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
-    }
-
-    process
-    {
-        $keyList = @()
-        $pwdList = @()
-        if ($Type -eq "All")
+        if ($Type -eq 'All')
         {
-            $filter = "KeyCredentials,PasswordCredentials"
+            $filter = 'KeyCredentials,PasswordCredentials'
         }
         else
         {
             $filter = $Type
         }
+    }
+
+    process
+    {
+        $credList = @()
 
         if (-not [string]::IsNullOrEmpty($AppId))
         {
@@ -79,13 +78,21 @@ function Get-MSGApplicationCredential
         }
         if ([string]::IsNullOrEmpty($Id))
         {
-            Write-Warning "Must provide either a valid ObjectId or AppId"
+            Write-Warning 'Must provide either a valid ObjectId or AppId'
             return $null
         }
 
-        if ($filter -match "KeyCredentials") { $keyList = @(Get-MSGApplicationKeyCredential -Id $id) }
-        if ($filter -match "PasswordCredentials") { $pwdList = @(Get-MSGApplicationPasswordCredential -Id $id) }
-        if ($null -ne $keyList) { buildCredList -cObjectList $keyList }
-        if ($null -ne $pwdList) { buildCredList -cObjectList $pwdList }
+        if ($filter -match 'KeyCredentials')
+        {
+            $credList += @(Get-MSGApplicationKeyCredential -Id $id)
+        }
+        if ($filter -match 'PasswordCredentials')
+        {
+            $credList += @(Get-MSGApplicationPasswordCredential -Id $id)
+        }
+        if ($credList.Count)
+        {
+            buildCredList -cObjectList $credList
+        }
     }
 }

@@ -180,19 +180,15 @@ function Connect-MSG
 
     begin
     {
-        $isInitialized = $false
-        if ($PSBoundParameters.Count)
+        if ([string]::IsNullOrEmpty($global:_MSGMaxRetry))
         {
-            Clear-MSGConfig
+            Set-Variable -Name _MSGMaxRetry -Scope Global -Value 5 -Option ReadOnly
         }
-        else
-        {
-            $MSGConfig = Get-MSGConfig
-            if ($null -ne $MSGConfig)
-            {
-                $isInitialized = $true
-            }
-        }
+
+
+        $MSGConfig = Get-MSGConfig
+        $isInitialized = ($MSGConfig.Initialized -eq $true)
+
         #region Validation
         if ([string]::IsNullOrEmpty($AzureEnvironmentName))
         {
@@ -295,11 +291,6 @@ function Connect-MSG
             'Authority'     = $MSGAuthInfo.Authority
         }
 
-        if ([string]::IsNullOrEmpty($_MSGMaxRetry))
-        {
-            Set-Variable -Name _MSGMaxRetry -Scope Global -Value 5 -Option ReadOnly
-        }
-
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
             'user'
@@ -345,9 +336,10 @@ function Connect-MSG
         }
 
         $authInfo = Get-AzureAdAccessTokenInfo -AccessToken ($res -split ' ')[1]
-        $scopes = $authInfo.scp
+        $script:scopes = $authInfo.scp
 
         $MSGAuthInfo = Get-MSGConfig
+        $MSGAuthInfo.Initialized = $true
         $MSGAuthInfo.TenantId = $authInfo.tid
 
         if (![string]::IsNullOrEmpty($authInfo.upn))
@@ -359,12 +351,12 @@ function Connect-MSG
         Set-MSGConfig -ConfigObject $MSGAuthInfo
         if ($MSGAuthInfo.AuthType -eq 'User' -and $null -eq $global:PIMRoleDictionary)
         {
-            Write-Output 'Setting up PIM role information ...'
+            Write-Verbose 'Setting up PIM role information ...'
             <#
             Yes, I hate using a global variable but the retrieval calls can be expensive so I persist through each invocation of Connect-MSG
             #>
             $global:PIMRoleDictionary = New-RoleMapping
-            Write-Output 'Done!'
+            Write-Verbose 'Done!'
         }
         Get-MSGCurrentSession
     }
@@ -402,7 +394,7 @@ function Get-MSGCurrentSession
             PSTypeName   = 'MSGraph.Account'
             Account      = $MSGAuthInfo.User
             Environment  = $MSGAuthInfo.Environment
-            Scopes       = $scopes -split ' '
+            Scopes       = $script:scopes -split ' '
             TenantId     = $MSGAuthInfo.TenantId
             TenantDomain = $MSGAuthInfo.TenantDomain
             AccountType  = if ($MSGAuthInfo.AuthType -eq 'App')

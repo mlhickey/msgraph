@@ -26,19 +26,26 @@ function Get-MSGServicePrincipalCredential
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the servicePrincipal.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
-[string]$Id,
+            HelpMessage = 'Id of the servicePrincipal.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
+        [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "Type of credential: PasswordCredentials, KeyCredentials or All")]
+            ValueFromPipelineByPropertyName = $true,
+            HelpMessage = 'AppId of the application')]
+        [ValidateNotNullOrEmpty()]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
+        [string]$AppId,
+
+        [Parameter(Mandatory = $false,
+            HelpMessage = 'Type of credential: PasswordCredentials, KeyCredentials or All')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet(
-            "PasswordCredentials",
-            "KeyCredentials",
-            "All")]
-        [string]$Type = "All"
+            'PasswordCredentials',
+            'KeyCredentials',
+            'All')]
+        [string]$Type = 'All'
     )
 
     begin
@@ -46,12 +53,12 @@ function Get-MSGServicePrincipalCredential
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
-        if ($Type -eq "All")
+        if ($Type -eq 'All')
         {
-            $filter = "KeyCredentials,PasswordCredentials"
+            $filter = 'KeyCredentials,PasswordCredentials'
         }
         else
         {
@@ -61,11 +68,28 @@ function Get-MSGServicePrincipalCredential
 
     process
     {
-        $keyList = @()
-        $pwdList = @()
-        if ($filter -match "KeyCredentials") { $keyList = Get-MSGServicePrincipalKeyCredential -Id $id }
-        if ($filter -match "PasswordCredentials") { $pwdList = Get-MSGServicePrincipalPasswordCredential -Id $id }
-        if ($null -ne $keyList) { buildCredList -cObjectList $keyList }
-        if ($null -ne $pwdList) { buildCredList -cObjectList $pwdList }
+        $credList = @()
+
+        if (-not [string]::IsNullOrEmpty($AppId))
+        {
+            $id = [guid](Get-MSGServicePrincipal -AppId $AppId -Properties id).Id
+        }
+        if ([string]::IsNullOrEmpty($Id))
+        {
+            Write-Warning 'Must provide either a valid ObjectId or AppId'
+            return $null
+        }
+        if ($filter -match 'KeyCredentials')
+        {
+            $credList += Get-MSGServicePrincipalKeyCredential -Id $id
+        }
+        if ($filter -match 'PasswordCredentials')
+        {
+            $credList += Get-MSGServicePrincipalPasswordCredential -Id $id
+        }
+        if ($credList.Count)
+        {
+            buildCredList -cObjectList $credList
+        }
     }
 }

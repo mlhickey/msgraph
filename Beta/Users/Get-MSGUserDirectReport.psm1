@@ -28,6 +28,25 @@ function Get-MSGUserDirectReport
         [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
+        [Parameter(Mandatory = $false,
+            ParameterSetName = 'Filter',
+            HelpMessage = 'OData query filter')]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'My')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [string]$Filter,
+
+        [Parameter(ParameterSetName = 'Id',
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
+        [Parameter(ParameterSetName = 'My')]
+        [Parameter(ParameterSetName = 'Filter')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [ValidateNotNullOrEmpty()]
+        [string[]]$Properties,
+
         [Parameter(ParameterSetName = 'My')]
         [switch]$MyUser
     )
