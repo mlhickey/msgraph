@@ -58,7 +58,7 @@ function Get-MSPIMGroupRoleAssignment
 
         $filter = "`$expand=linkedEligibleRoleAssignment,subject,roleDefinition(`$expand=resource)&`$filter=(roleDefinition/resource/id eq '$id')"
 
-        $res = Get-MSGObject -Type 'privilegedAccess/aadGroups/roleAssignments' -Filter $filter
+        $res = Get-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/aadGroups/roleAssignments' -Filter $filter
 
         if ($res.StatusCode -ge 400)
         {

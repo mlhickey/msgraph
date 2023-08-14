@@ -61,12 +61,12 @@ function Get-MSGDirectoryRole
         {
             'id'
             {
-                Get-MSGObject -Type "directoryRoles/$Id"
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "directoryRoles/$Id"
                 break
             }
             'topall'
             {
-                Get-MSGObject -Type 'directoryRoles' -All:$All
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'directoryRoles' -All:$All
                 break
             }
         }

@@ -22,7 +22,7 @@ function Remove-MSGRiskyUser
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "List of user IDs to dismiss")]
+            HelpMessage = 'List of user IDs to dismiss')]
         [string[]]$UserIdList
     )
 
@@ -31,17 +31,17 @@ function Remove-MSGRiskyUser
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        $queryString = "riskyUsers/dismiss"
-        $body = @{ "userIds" = $UserIdList }
-        if ($PSCmdlet.ShouldProcess("$Id", "Remove risky user"))
+        $queryString = 'riskyUsers/dismiss'
+        $body = @{ 'userIds' = $UserIdList }
+        if ($PSCmdlet.ShouldProcess("$Id", 'Remove risky user'))
         {
-            Set-MSGObject -Type $queryString -Body $body -Method POST
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $queryString -Body $body -Method POST
         }
     }
 }

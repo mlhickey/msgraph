@@ -24,16 +24,16 @@ function Remove-MSGServicePrincipalOwner
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the serviceprincipal.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the serviceprincipal.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             Position = 1,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the user to remove")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the user to remove')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$RefObjectId
     )
 
@@ -42,7 +42,7 @@ function Remove-MSGServicePrincipalOwner
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -52,9 +52,9 @@ function Remove-MSGServicePrincipalOwner
             '@odata.id' = "https://graph.microsoft.com/$($MSGAuthInfo.GraphVersion)/directoryObjects/$RefObjectId"
         }
 
-        if ($PSCmdlet.ShouldProcess("$Id", "Remove owner assignment"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Remove owner assignment'))
         {
-            Set-MSGObject -Type "servicePrincipals/$id/owners" -Id "`$ref" -Body $body -Method DELETE
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id/owners" -Id "`$ref" -Body $body -Method DELETE
         }
     }
 }

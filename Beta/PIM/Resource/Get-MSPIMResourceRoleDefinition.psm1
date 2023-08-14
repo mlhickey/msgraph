@@ -43,8 +43,8 @@ function Get-MSPIMResourceRoleDefinition
             Position = 1,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the specific resource")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the specific resource')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$ResourceId
     )
 
@@ -53,12 +53,12 @@ function Get-MSPIMResourceRoleDefinition
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        Get-MSGObject -Type "privilegedAccess/azureResources/resources/$ResourceId/roleDefinitions" -ObjectName "MSPIM"
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "privilegedAccess/azureResources/resources/$ResourceId/roleDefinitions" -ObjectName 'MSPIM'
     }
 }

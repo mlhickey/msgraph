@@ -104,6 +104,7 @@ function Get-AppAuthenticationResult
 
         if ($null -ne $authResult)
         {
+            Write-Debug "[Get-AppAuthenticationResult]: - $((Get-AzureAdAccessTokenInfo -AuthToken $authResult).scp)"
             if (-not $clientCache.Contains($ClientId))
             {
                 $clientCache.Add($ClientId, $authResult)
@@ -112,7 +113,7 @@ function Get-AppAuthenticationResult
             $authHeader = $authResult.CreateAuthorizationHeader()
             if ($null -eq $authResult.TenantId)
             {
-                $MSGAuthInfo.TenantId = (Get-AzureAdAccessTokenInfo -Token $authResult).tid
+                $MSGAuthInfo.TenantId = (Get-AzureAdAccessTokenInfo -AuthToken $authResult).tid
             }
             else
             {

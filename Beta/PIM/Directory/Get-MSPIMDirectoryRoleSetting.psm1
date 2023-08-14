@@ -33,7 +33,7 @@ function Get-MSPIMDirectoryRoleSetting
             ValueFromPipelineByPropertyName = $true,
             HelpMessage = 'GUID of PIM role to enable')]
         [Alias('RoleDefinitionId')]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$RoleID,
 
         [Parameter(Mandatory = $false,
@@ -87,7 +87,7 @@ function Get-MSPIMDirectoryRoleSetting
             $filter = "roleDefinitionId eq '$roleId'"
         }
 
-        $res = Get-MSGObject -Type "privilegedAccess/aadroles/resources/$($MSGAuthInfo.TenantId)/roleSettings" -Filter $filter
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "privilegedAccess/aadroles/resources/$($MSGAuthInfo.TenantId)/roleSettings" -Filter $filter
         if ($null -ne $res -and $res.StatusCode -lt 300)
         {
             $res | ForEach-Object { Add-Member -InputObject $_ -MemberType NoteProperty -Name 'RoleName' -Value $global:roleId2Name.Item($_.RoleDefinitionId).displayName }

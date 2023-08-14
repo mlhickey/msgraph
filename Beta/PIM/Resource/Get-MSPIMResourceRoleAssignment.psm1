@@ -19,26 +19,26 @@ function Get-MSPIMResourceRoleAssignment
      https://docs.microsoft.com/en-us/graph/api/governanceresource-list?view=graph-rest-beta&tabs=http
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
-    [CmdletBinding(DefaultParameterSetName = "my")]
+    [CmdletBinding(DefaultParameterSetName = 'my')]
     param(
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "User",
+            ParameterSetName = 'User',
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "ResourceId",
+            ParameterSetName = 'ResourceId',
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the specific resource")]
+            HelpMessage = 'Id of the specific resource')]
         [string]$ResourceId,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "My")]
+            ParameterSetName = 'My')]
         [switch]$MyUser
     )
 
@@ -47,7 +47,7 @@ function Get-MSPIMResourceRoleAssignment
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -55,18 +55,18 @@ function Get-MSPIMResourceRoleAssignment
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "resourceid"
+            'resourceid'
             {
                 $filter = "resourceId eq '$ResourceId'"
                 break
             }
-            "my"
+            'my'
             {
-                $SubjectId = (Get-MSGObject -Type "me" -Filter "`$select=id").Id
+                $SubjectId = (Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'me' -Filter "`$select=id").Id
                 $filter = "`$expand=linkedEligibleRoleAssignment,subject,roleDefinition(`$expand=resource)&`$filter=(subjectId eq '$SubjectId')"
                 break
             }
-            "user"
+            'user'
             {
                 try
                 {
@@ -89,10 +89,13 @@ function Get-MSPIMResourceRoleAssignment
             }
         }
 
-        $res = Get-MSGObject -Type "privilegedAccess/azureResources/roleAssignments" -Filter $filter
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/azureResources/roleAssignments' -Filter $filter
 
-        if ($res.StatusCode -ge 400) { return $res }
-        $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, "MSPIM.privilegedAccess.roleAssignments") }
+        if ($res.StatusCode -ge 400)
+        {
+            return $res
+        }
+        $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, 'MSPIM.privilegedAccess.roleAssignments') }
         $res
     }
 }

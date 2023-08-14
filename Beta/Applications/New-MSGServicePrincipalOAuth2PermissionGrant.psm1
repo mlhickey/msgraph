@@ -32,26 +32,26 @@ function New-MSGServicePrincipalOAuth2PermissionGrant
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = "Id",
-            HelpMessage = "Id of the servicePrincipal.")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
-        [Alias("ObjectId")]
+            ParameterSetName = 'Id',
+            HelpMessage = 'Id of the servicePrincipal.')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
+        [Alias('ObjectId')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             Position = 1,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = "Id",
-            HelpMessage = "Id of the resource.")]
+            ParameterSetName = 'Id',
+            HelpMessage = 'Id of the resource.')]
         [string]$ResourceId,
 
         [Parameter(Mandatory = $true,
             Position = 2,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = "Id",
-            HelpMessage = "List of scopes")]
+            ParameterSetName = 'Id',
+            HelpMessage = 'List of scopes')]
         [string]$Scope
     )
 
@@ -60,25 +60,25 @@ function New-MSGServicePrincipalOAuth2PermissionGrant
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        $Now = Get-Date ([datetime]::UtcNow) -UFormat "%Y-%m-%dT%H:%M:%SZ"
+        $Now = Get-Date ([datetime]::UtcNow) -UFormat '%Y-%m-%dT%H:%M:%SZ'
         $oauth2Grant = [PSCustomObject][Ordered]@{
             clientId    = $Id
-            consentType = "AllPrincipals"
+            consentType = 'AllPrincipals'
             principalId = $null
             resourceId  = $ResourceId
             scope       = $Scope
             startTime   = $Now
             expiryTime  = $Now
         }
-        if ($PSCmdlet.ShouldProcess("$Id", "Create oAuth2Permissiongrants"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Create oAuth2Permissiongrants'))
         {
-            New-MSGObject -Type "oAuth2Permissiongrants " -Body $oauth2Grant
+            New-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'oAuth2Permissiongrants ' -Body $oauth2Grant
         }
     }
 }

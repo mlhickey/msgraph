@@ -28,7 +28,7 @@ function Get-MSGServicePrincipalMembership
             ValueFromPipelineByPropertyName = $true,
             HelpMessage = 'ObjectId of the servicePrincipal.')]
         [Alias('ObjectId')]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
@@ -65,13 +65,13 @@ function Get-MSGServicePrincipalMembership
         {
             'id'
             {
-                Get-MSGObject -Type $typeString -Body $body -All:$All -Method POST
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Body $body -All:$All -Method POST
                 break;
             }
 
             'count'
             {
-                Get-MSGObject -Type $typeString -Body $body -CountOnly -Method POST
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Body $body -CountOnly -Method POST
                 break
             }
         }

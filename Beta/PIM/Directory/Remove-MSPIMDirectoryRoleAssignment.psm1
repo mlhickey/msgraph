@@ -33,7 +33,7 @@ function Remove-MSPIMDirectoryRoleAssignment
             ValueFromPipelineByPropertyName = $true,
             HelpMessage = 'GUID of PIM role to enable')]
         [Alias('RoleDefinitionId')]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$RoleID,
 
         [Parameter(Mandatory = $true,
@@ -106,7 +106,7 @@ function Remove-MSPIMDirectoryRoleAssignment
         }
         if ($PSCmdlet.ShouldProcess("$Id", 'Remove PIM assignment'))
         {
-            Set-MSGObject -Type 'privilegedAccess/aadroles/roleAssignmentRequests' -Method POST -Body $body -ObjectName 'MSPIM'
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/aadroles/roleAssignmentRequests' -Method POST -Body $body -ObjectName 'MSPIM'
         }
     }
 }

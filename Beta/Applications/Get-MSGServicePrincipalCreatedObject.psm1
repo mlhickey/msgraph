@@ -32,18 +32,18 @@ function Get-MSGServicePrincipalCreatedObject
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectIdof the ServicePrincipal.")]
-        [Alias("ObjectId", "ServicePrincipalPrincipalName")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectIdof the ServicePrincipal.')]
+        [Alias('ObjectId', 'ServicePrincipalPrincipalName')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
@@ -61,7 +61,7 @@ function Get-MSGServicePrincipalCreatedObject
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -69,6 +69,6 @@ function Get-MSGServicePrincipalCreatedObject
     process
     {
         $typeString = "ServicePrincipals/$id/createdObjects"
-        Get-MSGObject -Type $typeString -Filter $queryFilter -All:$All
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Filter $queryFilter -All:$All
     }
 }

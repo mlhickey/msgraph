@@ -71,7 +71,7 @@ function Get-MSPIMDirectoryRoleAssignment
             ValueFromPipelineByPropertyName = $true,
             HelpMessage = 'GUID of PIM role to enable')]
         [Alias('RoleDefinitionId')]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$RoleID,
 
         [Parameter(ParameterSetName = 'User',
@@ -119,7 +119,7 @@ function Get-MSPIMDirectoryRoleAssignment
         {
             'my'
             {
-                $SubjectId = (Get-MSGObject -Type 'me' -Filter "`$select=id").Id
+                $SubjectId = (Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'me' -Filter "`$select=id").Id
                 $filter = "subjectId eq '$SubjectId'"
                 break
             }
@@ -158,8 +158,11 @@ function Get-MSPIMDirectoryRoleAssignment
         }
         # Added expansion
         $optionList = "`$expand=linkedEligibleRoleAssignment,roleDefinition,subject&`$count=true&`$filter=$filter"
-        $res = Get-MSGObject -Type $formatstring -OptionList $optionList -ObjectName 'MSPIM' -All:$All
-        if ($res.StatusCode -ge 400) { return $res }
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $formatstring -OptionList $optionList -ObjectName 'MSPIM' -All:$All
+        if ($res.StatusCode -ge 400)
+        {
+            return $res 
+        }
         $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, 'MSPIM.privilegedAccess.roleAssignment') }
 
         if ($ResolveIDs)

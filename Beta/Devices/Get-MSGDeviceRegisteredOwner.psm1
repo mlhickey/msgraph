@@ -34,18 +34,18 @@ function Get-MSGDeviceRegisteredOwner
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the device.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the device.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties
     )
@@ -55,13 +55,13 @@ function Get-MSGDeviceRegisteredOwner
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
 
     process
     {
-        Get-MSGObject -Type "devices/$Id/registeredOwners" -Filter $queryFilter
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "devices/$Id/registeredOwners" -Filter $queryFilter
     }
 }

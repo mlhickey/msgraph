@@ -1,11 +1,11 @@
-function Get-MSGUserManager
+function Get-MSGUserSponsor
 {
     <#
     .SYNOPSIS
     Get application assignments
 
     .DESCRIPTION
-    The Get-MSGUserManager cmdlet gets the maanger for the specified user(s)
+    The Get-MSGUserSponsor cmdlet gets the maanger for the specified user(s)
 
     .PARAMETER Id
     Specifies the ID (as a UPN or ObjectId) of a user in Azure AD.  This parameter is also aliased to ObjectId and UserPrincipalName for named pipeline processing
@@ -14,7 +14,7 @@ function Get-MSGUserManager
     Returns information based on the current authenticated user
 
     .LINK
-    https://docs.microsoft.com/en-us/graph/api/user-list-manager?view=graph-rest-beta
+    https://docs.microsoft.com/en-us/graph/api/user-list-Sponsor?view=graph-rest-beta
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
     [CmdletBinding(DefaultParameterSetName = 'My')]
@@ -26,10 +26,7 @@ function Get-MSGUserManager
             ValueFromPipelineByPropertyName = $true,
             HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
         [Alias('ObjectId', 'UserPrincipalName')]
-        [string]$Id,
-
-        [Parameter(ParameterSetName = 'My')]
-        [switch]$MyUser
+        [string]$Id
     )
 
     begin
@@ -48,12 +45,7 @@ function Get-MSGUserManager
             'id'
             {
                 $id = [uri]::EscapeDataString($id)
-                $typeString = 'users/{0}/manager' -f $Id
-                break
-            }
-            'my'
-            {
-                $typeString = 'me/manager'
+                $typeString = 'users/{0}/sponsors' -f $Id
                 break
             }
         }

@@ -27,11 +27,11 @@ function Get-MSGUserJoinedTeam
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the User.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the User.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
-        [Parameter(ParameterSetName = "My")]
+        [Parameter(ParameterSetName = 'My')]
         [switch]$MyUser
     )
 
@@ -40,7 +40,7 @@ function Get-MSGUserJoinedTeam
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -49,18 +49,18 @@ function Get-MSGUserJoinedTeam
 
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 $id = [uri]::EscapeDataString($id)
-                $typeString = "users/{0}/joinedTeams" -f $Id
+                $typeString = 'users/{0}/joinedTeams' -f $Id
                 break
             }
-            "my"
+            'my'
             {
-                $typeString = "me/joinedTeams"
+                $typeString = 'me/joinedTeams'
                 break
             }
         }
-        Get-MSGObject -Type $typeString -All
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -All
     }
 }

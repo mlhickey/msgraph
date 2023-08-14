@@ -30,22 +30,22 @@ function Get-MSGGroupOwner
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the group")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the group')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search")]
+            ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties
     )
@@ -55,11 +55,11 @@ function Get-MSGGroupOwner
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $groupList = @()
-        $fmtString = "groups/{0}/owners"
-        $null = $PSBoundParameters.Remove("SearchString")
+        $fmtString = 'groups/{0}/owners'
+        $null = $PSBoundParameters.Remove('SearchString')
         $propFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
 
@@ -67,21 +67,27 @@ function Get-MSGGroupOwner
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 $queryString = [string]::Format($fmtString, $Id)
                 break
             }
-            "search"
+            'search'
             {
-                try { $groupList = ProcessGroupSearchString -SearchString $SearchString }
-                catch { return $null }
+                try
+                {
+                    $groupList = ProcessGroupSearchString -SearchString $SearchString
+                }
+                catch
+                {
+                    return $null
+                }
                 $group = $groupList
                 $queryString = [string]::Format($fmtString, $group.Id)
                 break
             }
         }
 
-        Get-MSGObject -Type $queryString -All -Filter $propFilter
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $queryString -All -Filter $propFilter
     }
 }

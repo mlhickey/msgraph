@@ -23,26 +23,26 @@ function Set-MSGUser
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingUsernameAndPasswordParams', '')]
     [CmdletBinding()]
-    [Alias("Set-MSGraphUser")]
+    [Alias('Set-MSGraphUser')]
     param(
         [Parameter(Mandatory = $true,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
-        [Alias("ObjectId")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
+        [Alias('ObjectId')]
         [string]$Id,
 
         [Parameter(Mandatory = $false)]
         [bool]$AccountEnabled,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "Age group: Adult, Minor or NotAdult")]
+            HelpMessage = 'Age group: Adult, Minor or NotAdult')]
         [ValidateSet(
-            "adult",
-            "minor",
-            "notadult"
+            'adult',
+            'minor',
+            'notadult'
         )]
         [object]$AgeGroup,
 
@@ -69,11 +69,11 @@ function Set-MSGUser
         [string]$DisplayName,
 
         [Parameter(Mandatory = $false)]
-        [string]$EmployeeHireDate,        
-        
+        [string]$EmployeeHireDate,
+
         [Parameter(Mandatory = $false)]
-        [string]$EmployeeLeaveDateTime,        
-        
+        [string]$EmployeeLeaveDateTime,
+
         [Parameter(Mandatory = $false)]
         [string]$EmployeeId,
 
@@ -192,10 +192,10 @@ function Set-MSGUser
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
-        $null = $PSBoundParameters.Remove("Id")
+        $null = $PSBoundParameters.Remove('Id')
         $patchBody = @{}
         $onPremisesExtensionAttributes = @{}
         $eaCount = 0
@@ -205,8 +205,11 @@ function Set-MSGUser
             $inputObject = $patchBody
             $Name = camelCase $psbp.key
             $Value = $psbp.Value
-            if ([string]::IsNullOrEmpty($Value)) { $Value = $Null }
-            if ($Name -match "extensionAttribute\d*")
+            if ([string]::IsNullOrEmpty($Value))
+            {
+                $Value = $Null
+            }
+            if ($Name -match 'extensionAttribute\d*')
             {
                 $inputObject = $onPremisesExtensionAttributes
                 $eaCount++
@@ -215,13 +218,13 @@ function Set-MSGUser
         }
         if ($eaCount -gt 0)
         {
-            $patchBody.Add("onPremisesExtensionAttributes", $onPremisesExtensionAttributes)
+            $patchBody.Add('onPremisesExtensionAttributes', $onPremisesExtensionAttributes)
         }
     }
 
     process
     {
         $id = [uri]::EscapeDataString($id)
-        Set-MSGObject -Type "users/$id" -Method PATCH -Body $patchBody
+        Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/$id" -Method PATCH -Body $patchBody
     }
 }

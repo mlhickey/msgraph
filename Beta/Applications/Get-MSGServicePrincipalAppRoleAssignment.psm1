@@ -62,11 +62,11 @@ function Get-MSGServicePrincipalAppRoleAssignment
 
     process
     {
-        #$res = Get-MSGObject -Type "servicePrincipals/$Id" -Filter "`$expand=appRoleAssignments"
-        $res = Get-MSGObject -Type "servicePrincipals/$Id/appRoleAssignments"
+        #$res = Get-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$Id" -Filter "`$expand=appRoleAssignments"
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$Id/appRoleAssignments"
         if ($res.StatusCode -ge 400)
         {
-            return $res 
+            return $res
         }
         if ($ResolveIds)
         {
@@ -102,11 +102,11 @@ function BuildPermissionTable
         $Roles | Select-Object Id, Value | ForEach-Object { $perm.Add($_.Id, $_.value) }
         try
         {
-            $appPermissionTable.Add($AppId, $perm) 
+            $appPermissionTable.Add($AppId, $perm)
         }
         catch
         {
-            Write-Warning "AddPermissionTable: Failed to add perms to ${appId}"; return $null 
+            Write-Warning "AddPermissionTable: Failed to add perms to ${appId}"; return $null
         }
     }
 }

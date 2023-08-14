@@ -16,9 +16,9 @@ $script:provisioningTable = @{
     'TargetIdentityId'           = "targetIdentity/id eq 'FARG'"
     'SourceIdentityDisplayName'  = "sourceIdentity/displayName eq 'FARG'"
     'TargetIdentityDisplayName'  = "targetIdentity/displayName eq 'FARG'"
-    "initiatedByDisplayName"     = "initiatedBy/displayName eq 'FARG'"
-    'StartDate'                  = "FARG"
-    'EndDate'                    = "FARG"
+    'initiatedByDisplayName'     = "initiatedBy/displayName eq 'FARG'"
+    'StartDate'                  = 'FARG'
+    'EndDate'                    = 'FARG'
 }
 function Get-MSGProvisioningEntry
 {
@@ -53,8 +53,8 @@ function Get-MSGProvisioningEntry
     {
 
         $paramTable = $provisioningTable
-        $auditType = "provisioning"
-        $dateParam = "activityDateTime"
+        $auditType = 'provisioning'
+        $dateParam = 'activityDateTime'
         $Dictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
         foreach ($paramName in $paramTable.GetEnumerator())
         {
@@ -68,7 +68,7 @@ function Get-MSGProvisioningEntry
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         $today = (Get-Date)
@@ -98,7 +98,7 @@ function Get-MSGProvisioningEntry
         #region DateProcessing
         if ($EndDate -and ($StartDate -gt $EndDate))
         {
-            throw "StarDate is greater than EndDate"
+            throw 'StarDate is greater than EndDate'
         }
         if ($StartDate -and $EndDate)
         {
@@ -122,23 +122,23 @@ function Get-MSGProvisioningEntry
             if ($paramTable.Contains($key))
             {
                 $queryFilter += $($paramTable[$key])
-                $queryFilter = $queryFilter.Replace("FARG", $value)
+                $queryFilter = $queryFilter.Replace('FARG', $value)
             }
         }
         #
         if (-not [string]::IsNullOrEmpty($queryFilter))
         {
-            [string]$filter = "(" + ($queryFilter -join ' and ') + ")"
+            [string]$filter = '(' + ($queryFilter -join ' and ') + ')'
         }
         if (-not $All -and $Top)
         {
             if ($filter)
             {
-                $filter += "&"
+                $filter += '&'
             }
             $filter += "`$top=$top"
         }
 
-        Get-MSGObject -Type "auditLogs/$auditType" -Filter $Filter -All:$All
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "auditLogs/$auditType" -Filter $Filter -All:$All
     }
 }

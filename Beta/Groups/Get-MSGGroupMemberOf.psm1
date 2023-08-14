@@ -73,6 +73,6 @@ function Get-MSGGroupMemberOf
             $queryCmd = 'getMemberObjects'
         }
         $type = 'groups/{0}/{1}' -f $Id, $queryCmd
-        Get-MSGObject -Type $type -Method POST -Body $body
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $type -Method POST -Body $body
     }
 }

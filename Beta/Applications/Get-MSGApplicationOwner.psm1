@@ -88,6 +88,6 @@ function Get-MSGApplicationOwner
             throw 'Either an objectId or appId is required'
         }
 
-        Get-MSGObject -Type "applications/$id/owners" -Filter $propFilter
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "applications/$id/owners" -Filter $propFilter
     }
 }

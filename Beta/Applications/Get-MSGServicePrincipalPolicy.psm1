@@ -23,18 +23,18 @@ function Get-MSGServicePrincipalPolicy
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the servicePrincipal")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
-[string]$Id,
+            HelpMessage = 'Id of the servicePrincipal')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
+        [string]$Id,
 
         [Parameter(Mandatory = $true,
             Position = 1,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Policy type to retrieve: ClaimsMapping, HomeRealmDiscovery, TokenLifetime, TokenIssuance")]
+            HelpMessage = 'Policy type to retrieve: ClaimsMapping, HomeRealmDiscovery, TokenLifetime, TokenIssuance')]
         [ValidateNotNullOrEmpty()]
-        [ValidateSet("ClaimsMapping", "HomeRealmDiscovery", "TokenLifetime", "TokenIssuance")]
+        [ValidateSet('ClaimsMapping', 'HomeRealmDiscovery', 'TokenLifetime', 'TokenIssuance')]
         [string]$PolicyType
     )
 
@@ -43,19 +43,19 @@ function Get-MSGServicePrincipalPolicy
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         if (-not [string]::IsNullOrEmpty($properties))
         {
             $propFilter = "`$select="
-            $propFilter += $properties -join ", "
+            $propFilter += $properties -join ', '
         }
     }
 
     process
     {
-        $type = "{0}Policies" -f (camelCase $PolicyType)
-        Get-MSGObject -Type "servicePrincipals/$id/$type"
+        $type = '{0}Policies' -f (camelCase $PolicyType)
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id/$type"
     }
 }

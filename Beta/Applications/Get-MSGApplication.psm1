@@ -147,7 +147,7 @@ function Get-MSGApplication
         {
             'id'
             {
-                Get-MSGObject -Type "applications/$id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "applications/$id" -Filter $queryFilter
                 break
             }
             'appid'
@@ -160,17 +160,17 @@ function Get-MSGApplication
                 {
                     $queryFilter = "appid eq '$AppId'&" + $queryFilter
                 }
-                Get-MSGObject -Type 'applications' -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'applications' -Filter $queryFilter
                 break
             }
             { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type 'applications' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'applications' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
             'count'
             {
-                Get-MSGObject -Type 'applications' -Filter $queryFilter -CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'applications' -Filter $queryFilter -CountOnly
             }
         }
     }

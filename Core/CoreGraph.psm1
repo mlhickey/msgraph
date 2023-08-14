@@ -28,21 +28,21 @@ function Get-MSGObject
 
     .EXAMPLE
     Reports:
-    Get-MSGObject -Type reports/auditEvents -All  -Filter "(eventTime gt 2017-04-14T16:00:00Z and eventTime lt 2017-04-15T16:00:00Z)"
+    Get-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type reports/auditEvents -All  -Filter "(eventTime gt 2017-04-14T16:00:00Z and eventTime lt 2017-04-15T16:00:00Z)"
 
     .EXAMPLE
     Devices:
-    Get-MSGObject -Type users/bscallan@microsoft.com/registeredDevices
-    Get-MSGObject -Type devices/deviceId_096754c0-de03-46ca-8581-ec86dc1c884e
+    Get-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type users/bscallan@microsoft.com/registeredDevices
+    Get-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type devices/deviceId_096754c0-de03-46ca-8581-ec86dc1c884e
 
     .EXAMPLE
     Service Principals:
-    Get-MSGObject -Type servicePrincipals -All
+    Get-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type servicePrincipals -All
 
     .EXAMPLE
     With body and POST method:
         $body = @{ "securityEnabledOnly" = $false }
-        Get-MSGObject -Type "users/bscalls@microsoft.com/getMemberGroups" -Body $body -Method POST
+        Get-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/bscalls@microsoft.com/getMemberGroups" -Body $body -Method POST
 
     #>
 
@@ -158,7 +158,7 @@ function Get-MSGObject
             $Params['Uri'] = $nextLink
             $nextLink = $null
 
-            $result = Invoke-SafeWebRequest @Params
+            $result = Invoke-SafeWebRequest @Params -Debug:$DebugPreference -Verbose:$VerbosePreference
             #region ErrorProcessing
             if ($result.Exception.Response.StatusCode -ge 400)
             {
@@ -227,7 +227,7 @@ function Get-MSGObject
             $addType = -not ($filter -match 'select=' -or $filter -match 'expand=')
             $Objects | ForEach-Object {
                 $type = $_.'@odata.type'
-                $_.PSObject.Properties.Remove('@odata.type')
+                #$_.PSObject.Properties.Remove('@odata.type')
                 if ($addType)
                 {
                     if ([string]::IsNullOrEmpty($type))
@@ -295,7 +295,7 @@ function Get-MSGObjectById
             $body.Add('types', $Type)
         }
 
-        $result = Get-MSGObject -Type 'directoryObjects/getByIds' -Method POST -Body $body -Filter $Filter
+        $result = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'directoryObjects/getByIds' -Method POST -Body $body -Filter $Filter
 
         #region ErrorProcessing
         if ($result.Exception.Response.StatusCode -ge 400)
@@ -440,7 +440,7 @@ function Set-MSGObject
     PSObject representation of required body parameters.  Set-MSGObject converts this to JSON before passing to Graph
 
     .EXAMPLE
-    Set-MSGObject -Type devices -Id $ObjectId -Method PATCH -Body @{ accountEnabled = $false}
+    Set-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type devices -Id $ObjectId -Method PATCH -Body @{ accountEnabled = $false}
 
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '')]
@@ -665,7 +665,7 @@ function Get-MSGLinkedObject
     {
         $objType = [string]::Format('{0}{1}/{2}', $Type.Trim(), $Id.Trim(), $Relationship)
     }
-    Get-MSGObject -Type $objType -All:$All
+    Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $objType -All:$All
 }
 
 function ProcessCoreBoundParams

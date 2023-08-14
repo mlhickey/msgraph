@@ -28,21 +28,21 @@ function Get-MSGFeatureRolloutPolicy
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the feature.")]
+            HelpMessage = 'ObjectId of the feature.')]
 
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )
@@ -52,18 +52,18 @@ function Get-MSGFeatureRolloutPolicy
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
 
     process
     {
-        $uri = "policies/featureRolloutPolicies"
+        $uri = 'policies/featureRolloutPolicies'
         if (-not [string]::IsNullOrEmpty($Id))
         {
             $uri += "/{$Id}"
         }
-        Get-MSGObject -Type $uri -Filter $queryFilter -All:$All
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $uri -Filter $queryFilter -All:$All
     }
 }

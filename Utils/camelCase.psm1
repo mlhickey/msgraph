@@ -6,7 +6,7 @@ function camelCase ()
         [string]$arg
     )
 
-    return ($arg.Substring(0,1).ToLower() + $arg.Substring(1))
+    return ($arg.Substring(0, 1).ToLower() + $arg.Substring(1))
 }
 
 

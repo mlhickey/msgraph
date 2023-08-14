@@ -86,22 +86,22 @@ function Get-MSGApplicationExpiredStatus
 
             'appid'
             {
-                $allAzureItems = Get-MSGObject -Type 'applications' -Filter "Appid eq '$AppId'&$propSet"
+                $allAzureItems = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'applications' -Filter "Appid eq '$AppId'&$propSet"
                 break
             }
             'objectid'
             {
-                $allAzureItems = Get-MSGObject -Type 'applications' -Filter "id eq '$Id'&$propset"
+                $allAzureItems = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'applications' -Filter "id eq '$Id'&$propset"
                 break
             }
             'searchstring'
             {
-                $allAzureItems = Get-MSGObject -Type 'applications' -SearchString "startswith(displayName,'$SearchString')" -Filter $propSet -All:$All
+                $allAzureItems = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'applications' -SearchString "startswith(displayName,'$SearchString')" -Filter $propSet -All:$All
                 break
             }
             'topall'
             {
-                $allAzureItems = Get-MSGObject -Type 'applications' -Filter $propSet -All:$All
+                $allAzureItems = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'applications' -Filter $propSet -All:$All
                 break
             }
         }

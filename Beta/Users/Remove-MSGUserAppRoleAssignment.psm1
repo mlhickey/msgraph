@@ -23,14 +23,14 @@ function Remove-MSGUserAppRoleAssignment
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id or UserPrincipal.")]
-        [Alias("ObjectId", "UserPrincipal")]
+            HelpMessage = 'Id or UserPrincipal.')]
+        [Alias('ObjectId', 'UserPrincipal')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the application role")]
+            HelpMessage = 'Id of the application role')]
         [string]$AppRoleAssignmentId
 
     )
@@ -40,15 +40,15 @@ function Remove-MSGUserAppRoleAssignment
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        if ($PSCmdlet.ShouldProcess("$Id", "Delete application assignment"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Delete application assignment'))
         {
-            Remove-MSGObject -Type "users/$id/appRoleAssignments" -Id $AppRoleAssignmentId
+            Remove-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/$id/appRoleAssignments" -Id $AppRoleAssignmentId
         }
     }
 }

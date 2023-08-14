@@ -32,13 +32,13 @@ function Get-MSGServicePrincipalOwnedObject
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the servicePrincipal")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the servicePrincipal')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties
     )
@@ -48,18 +48,18 @@ function Get-MSGServicePrincipalOwnedObject
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         if (-not [string]::IsNullOrEmpty($properties))
         {
             $propFilter = "`$select="
-            $propFilter += $properties -join ","
+            $propFilter += $properties -join ','
         }
     }
 
     process
     {
-        Get-MSGObject -Type "servicePrincipals/$id/ownedObjects" -Filter $propFilter
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id/ownedObjects" -Filter $propFilter
     }
 }

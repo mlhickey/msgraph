@@ -63,7 +63,7 @@ function Remove-MSGServiceAppRoleAssignment
     {
         if ($PSCmdlet.ShouldProcess("$Id", 'Remove approle ssignment'))
         {
-            $res = Remove-MSGObject -Type "servicePrincipals/$id/appRoleAssignments" -Id $ApproleAssignmentId
+            $res = Remove-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id/appRoleAssignments" -Id $ApproleAssignmentId
             $global:lastexitcode = $res.StatusCode
         }
     }

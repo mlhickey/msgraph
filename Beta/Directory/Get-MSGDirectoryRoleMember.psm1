@@ -14,23 +14,23 @@ function Get-MSGDirectoryRoleMember
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the role")]
-        [Parameter(ParameterSetName = "Count")]
+            HelpMessage = 'Id of the role')]
+        [Parameter(ParameterSetName = 'Count')]
         [ValidateNotNullOrEmpty()]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(
-            ParameterSetName = "Id",
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            ParameterSetName = 'Id',
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "Count")]
+        [Parameter(ParameterSetName = 'Count')]
         [switch]$CountOnly
     )
 
@@ -39,13 +39,13 @@ function Get-MSGDirectoryRoleMember
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
 
     process
     {
-        Get-MSGObject -Type "directoryRoles/$Id/members" -Filter $queryFilter -CountOnly:$CountOnly
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "directoryRoles/$Id/members" -Filter $queryFilter -CountOnly:$CountOnly
     }
 }

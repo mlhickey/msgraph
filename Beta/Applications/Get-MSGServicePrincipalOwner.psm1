@@ -33,18 +33,18 @@ function Get-MSGServicePrincipalOwner
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the servicePrincipal")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
-[string]$Id,
+            HelpMessage = 'Id of the servicePrincipal')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
+        [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
@@ -66,13 +66,13 @@ function Get-MSGServicePrincipalOwner
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
 
     process
     {
-        Get-MSGObject -Type "servicePrincipals/$id/owners" -Filter $queryFilter
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id/owners" -Filter $queryFilter
     }
 }

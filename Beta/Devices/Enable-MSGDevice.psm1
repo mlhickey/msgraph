@@ -40,6 +40,6 @@ function Enable-MSGDevice
 
     process
     {
-        Set-MSGObject -Type devices -Id $Id -Method PATCH -Body @{ accountEnabled = $true }
+        Set-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type devices -Id $Id -Method PATCH -Body @{ accountEnabled = $true }
     }
 }

@@ -53,6 +53,6 @@ function Add-MSGGroupMember
         $typeString = 'groups/{0}/members' -f $Id
         $bodyString = '{0}/{1}/directoryObjects/{2}' -f $MSGAuthInfo.GraphUrl, $MSGAuthInfo.GraphVersion, $ReFId
         $body = @{ '@odata.id' = $bodyString }
-        Set-MSGObject -Type $typeString -Id "`$ref" -Body $body -Method POST
+        Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Id "`$ref" -Body $body -Method POST
     }
 }

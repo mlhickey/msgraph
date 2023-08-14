@@ -33,17 +33,17 @@ function Get-MSGUserUsageRight
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the User.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the User.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
@@ -59,7 +59,7 @@ function Get-MSGUserUsageRight
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -67,13 +67,13 @@ function Get-MSGUserUsageRight
     process
     {
         $id = [uri]::EscapeDataString($id)
-        $typeString = "users/{0}/usageRights" -f $Id
+        $typeString = 'users/{0}/usageRights' -f $Id
 
-        $res = Get-MSGObject -Type $typeString -Filter $queryFilter -All:$All
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Filter $queryFilter -All:$All
         # do fixup where there are multiple datatypes
         if ($res.StausCode -lt 300)
         {
-            $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, "MSGraph.objects") }
+            $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, 'MSGraph.objects') }
         }
         $res
     }

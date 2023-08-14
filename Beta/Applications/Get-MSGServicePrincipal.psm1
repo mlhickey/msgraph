@@ -139,7 +139,7 @@ function Get-MSGServicePrincipal
         {
             'id'
             {
-                Get-MSGObject -Type "servicePrincipals/$id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id" -Filter $queryFilter
                 break
             }
             'appid'
@@ -152,17 +152,16 @@ function Get-MSGServicePrincipal
                 {
                     $queryFilter = @("Appid eq '$AppId'", $queryFilter) -join '&'
                 }
-                Get-MSGObject -Type 'servicePrincipals' -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'servicePrincipals' -Filter $queryFilter
                 break
             }
             { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type 'servicePrincipals' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
-                return
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'servicePrincipals' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
             }
             'count'
             {
-                Get-MSGObject -Type 'servicePrincipals' -Filter $queryFilter -CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'servicePrincipals' -Filter $queryFilter -CountOnly
             }
         }
     }

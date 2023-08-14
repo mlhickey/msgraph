@@ -31,39 +31,39 @@ function Get-MSGUserOAuthPermissionGrant
     .LINK
     https://docs.microsoft.com/en-us/graph/api/user-list-oauth2permissiongrants?view=graph-rest-1.0&tabs=http
     #>
-    [CmdletBinding(DefaultParameterSetName = "Id")]
+    [CmdletBinding(DefaultParameterSetName = 'Id')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
-        [Parameter(ParameterSetName = "My")]
+        [Parameter(ParameterSetName = 'My')]
         [ValidateNotNullOrEmpty()]
         [switch]$MyUser,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Partial/complete displayname of the group.")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Partial/complete displayname of the group.')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
-        [string[]]$Properties = @("id"),
+        [string[]]$Properties = @('id'),
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100
     )
@@ -73,9 +73,9 @@ function Get-MSGUserOAuthPermissionGrant
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
-        $null = $PSBoundParameters.Remove("SearchString")
+        $null = $PSBoundParameters.Remove('SearchString')
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
 
@@ -84,40 +84,43 @@ function Get-MSGUserOAuthPermissionGrant
         $ulist = @()
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "my"
+            'my'
             {
-                $list = Get-MSGObject -Type "me/oauth2PermissionGrants"
+                $list = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'me/oauth2PermissionGrants'
                 return UpdateTypes $list
             }
-            "id"
+            'id'
             {
                 $id = [uri]::EscapeDataString($id)
-                $list = Get-MSGObject -Type "users/$id/oauth2PermissionGrants" -All
+                $list = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/$id/oauth2PermissionGrants" -All
                 return UpdateTypes $list
             }
-            "search"
+            'search'
             {
-                if ($SearchString -match "\w:\w")
+                if ($SearchString -match '\w:\w')
                 {
                     $queryFilter += "`$search=`"$SearchString`""
-                    $uList = Get-MSGObject -Type "users"  -Filter $queryFilter -All:$All
+                    $uList = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'users' -Filter $queryFilter -All:$All
                 }
                 else
                 {
-                    $uList = Get-MSGObject -Type "users" -SearchString (BuildUserANRSearchString -SearchString $SearchString) -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                    $uList = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'users' -SearchString (BuildUserANRSearchString -searchString $SearchString) -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 }
                 break
             }
             default
             {
-                Write-Warning "You must specify either an ObjectId or a searchable string"
+                Write-Warning 'You must specify either an ObjectId or a searchable string'
                 return $null
             }
         }
-        if ($ulist.StatusCode -ge 400) { return $ulist }
+        if ($ulist.StatusCode -ge 400)
+        {
+            return $ulist 
+        }
         foreach ($u in $ulist)
         {
-            $list = Get-MSGObject -Type "users/$($u.id)/oauth2PermissionGrants" -All
+            $list = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/$($u.id)/oauth2PermissionGrants" -All
             UpdateTypes $list
         }
     }
@@ -129,6 +132,6 @@ function UpdateTypes
         [object]$objectList
     )
 
-    $objectList | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, "MSGraph.oAuth2Permissiongrants") }
+    $objectList | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, 'MSGraph.oAuth2Permissiongrants') }
     $objectList
 }

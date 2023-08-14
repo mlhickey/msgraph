@@ -60,7 +60,7 @@ function Get-MSGPolicy
             ValueFromPipelineByPropertyName = $true,
             HelpMessage = 'ObjectId of the Policy.')]
         [Alias('ObjectId')]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
@@ -113,13 +113,13 @@ function Get-MSGPolicy
         {
             'id'
             {
-                Get-MSGObject -Type "policies/$policy/$Id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "policies/$policy/$Id" -Filter $queryFilter
                 break
             }
 
             { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type "policies/$policy"-Filter $queryFilter -All:$All
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "policies/$policy"-Filter $queryFilter -All:$All
                 break
             }
         }

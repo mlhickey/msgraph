@@ -24,18 +24,18 @@ function Get-MSGRiskyUser
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the group")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the group')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $False,
-            HelpMessage = "Risk level: Low, Medium or High")]
+            HelpMessage = 'Risk level: Low, Medium or High')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet(
-            "Low",
-            "Medium",
-            "High"
+            'Low',
+            'Medium',
+            'High'
         )]
         [string]$RiskLevel,
         [switch]$All
@@ -46,22 +46,22 @@ function Get-MSGRiskyUser
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        $queryString = "riskyUsers"
+        $queryString = 'riskyUsers'
         if (-not [string]::IsNullOrEmpty($id))
         {
-            $queryString = += "/{0}" -f $id
+            $queryString = += '/{0}' -f $id
         }
 
         if (-not [string]::IsNullOrEmpty($RiskLevel))
         {
             $filter = "`riskLevel eq microsoft.graph.riskLevel'{0}'" -f $RiskLevel.ToLower()
         }
-        Get-MSGObject -Type $queryString -Filter $filter -All:$All
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $queryString -Filter $filter -All:$All
     }
 }

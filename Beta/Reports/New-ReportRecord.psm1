@@ -6,7 +6,7 @@ function New-ReportRecord
     )
 
     $reportBody = [PSCustomObject][Ordered]@{
-        PSTypeName                = "MSGraph.ReportRecord"
+        PSTypeName                = 'MSGraph.ReportRecord'
         Date                      = $record.activityDateTime
         CorrelationId             = $record.CorrelationId
         Service                   = $record.loggedByService

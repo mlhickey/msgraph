@@ -41,28 +41,28 @@ function New-MSGUserAppRoleAssignment
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id or UserPrincipal .")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Id or UserPrincipal .')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             Position = 1,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Application id of the resource.")]
+            HelpMessage = 'Application id of the resource.')]
         [guid]$ResourceId,
 
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Resource application roleName to assign")]
+            HelpMessage = 'Resource application roleName to assign')]
         [string]$RoleName,
 
         [Parameter(Mandatory = $false,
             Position = 2,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Resource application roleId to assign")]
+            HelpMessage = 'Resource application roleId to assign')]
         [guid]$RoleId
     )
 
@@ -71,7 +71,7 @@ function New-MSGUserAppRoleAssignment
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -85,7 +85,7 @@ function New-MSGUserAppRoleAssignment
 
         if ([string]::IsNullOrEmpty($RoleName) -and [string]::IsNullOrEmpty($RoleId))
         {
-            throw "You must specify either an roleName or roleId"
+            throw 'You must specify either an roleName or roleId'
         }
         elseif (-not [string]::IsNullOrEmpty($RoleName))
         {
@@ -102,9 +102,9 @@ function New-MSGUserAppRoleAssignment
             resourceId  = $ResourceSP.Id
             appRoleId   = $RoleId
         }
-        if ($PSCmdlet.ShouldProcess("$Id", "Create approle ssignment"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Create approle ssignment'))
         {
-            New-MSGObject -Type "users/$id/appRoleAssignments" -Body $roleAssignment
+            New-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/$id/appRoleAssignments" -Body $roleAssignment
         }
     }
 }

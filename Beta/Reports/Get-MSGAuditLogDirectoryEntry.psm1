@@ -10,8 +10,8 @@ $script:auditLogTable = @{
     'TargetResourceId'                = "targetResources/any(t: t/id eq 'FARG')"
     'TargetResourceDisplayName'       = "targetResources/any(t:t/displayName eq 'FARG')"
     'TargetResourceUserPrincipalName' = "targetResources/any(t:t/userPrincipalName eq 'FARG')"
-    'StartDate'                       = "FARG"
-    'EndDate'                         = "FARG"
+    'StartDate'                       = 'FARG'
+    'EndDate'                         = 'FARG'
 }
 function Get-MSGAuditLogDirectoryEntry
 {
@@ -51,8 +51,8 @@ function Get-MSGAuditLogDirectoryEntry
     dynamicparam
     {
         $paramTable = $auditLogTable
-        $dateParam = "activityDateTime"
-        $auditType = "directoryAudits"
+        $dateParam = 'activityDateTime'
+        $auditType = 'directoryAudits'
         $Dictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
         foreach ($paramName in $paramTable.GetEnumerator())
         {
@@ -66,7 +66,7 @@ function Get-MSGAuditLogDirectoryEntry
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         $today = (Get-Date)
@@ -96,7 +96,7 @@ function Get-MSGAuditLogDirectoryEntry
         #region DateProcessing
         if ($EndDate -and ($StartDate -gt $EndDate))
         {
-            throw "StarDate is greater than EndDate"
+            throw 'StarDate is greater than EndDate'
         }
         if ($StartDate -and $EndDate)
         {
@@ -120,36 +120,51 @@ function Get-MSGAuditLogDirectoryEntry
             if ($paramTable.Contains($key))
             {
                 $q = $($paramTable[$key])
-                $q = $q.Replace("FARG", $value)
+                $q = $q.Replace('FARG', $value)
                 $queryFilter += $q
             }
         }
         #
         if (-not [string]::IsNullOrEmpty($queryFilter))
         {
-            [string]$filter = "(" + ($queryFilter -join ' and ') + ")"
+            [string]$filter = '(' + ($queryFilter -join ' and ') + ')'
         }
         if (-not $All -and $Top)
         {
             if ($filter)
             {
-                $filter += "&"
+                $filter += '&'
             }
             $filter += "`$top=$top"
         }
 
-        $res = Get-MSGObject -Type "auditLogs/$auditType" -Filter $Filter -All:$All
-        if ($res.StatusCode -ge 400) { return $res }
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "auditLogs/$auditType" -Filter $Filter -All:$All
+        if ($res.StatusCode -ge 400)
+        {
+            return $res 
+        }
         if ($ResolveIds.IsPresent)
         {
             $count = 0;
             foreach ($r in $res)
             {
-                if ($r.StatusCode -ge 400) { Write-Warning "Count: $count`nRecord: $r"; continue }
-                try { New-ReportRecord -record $r; $count++ }
-                catch { Write-Error "$_ : $r"; continue }
+                if ($r.StatusCode -ge 400)
+                {
+                    Write-Warning "Count: $count`nRecord: $r"; continue 
+                }
+                try
+                {
+                    New-ReportRecord -record $r; $count++ 
+                }
+                catch
+                {
+                    Write-Error "$_ : $r"; continue 
+                }
             }
         }
-        else { $res }
+        else
+        {
+            $res 
+        }
     }
 }

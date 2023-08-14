@@ -78,25 +78,25 @@ function Get-MSGAppCredentialSignInActivities
             'keyid'
             {
                 $queryFilter = "id eq '$id'" + $queryFilter
-                Get-MSGObject -Type "reports/appCredentialSignInActivities?`$filter=keyId eq '$KeyId'"
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "reports/appCredentialSignInActivities?`$filter=keyId eq '$KeyId'"
                 break
             }
             'appid'
             {
                 $queryFilter = "id eq '$id'" + $queryFilter
-                Get-MSGObject -Type "reports/appCredentialSignInActivities?`$filter=appId eq '$AppId'"
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "reports/appCredentialSignInActivities?`$filter=appId eq '$AppId'"
                 break
             }
             'activityid'
             {
                 $queryFilter = "id eq '$id'" + $queryFilter
-                Get-MSGObject -Type "reports/appCredentialSignInActivities/$activityId'"
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "reports/appCredentialSignInActivities/$activityId'"
                 break
             }
             { $PSItem -match 'topall|search' }
             {
 
-                Get-MSGObject -Type 'reports/appCredentialSignInActivities' -Filter $queryFilter -All:$All
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'reports/appCredentialSignInActivities' -Filter $queryFilter -All:$All
                 break
             }
         }

@@ -72,7 +72,7 @@ function Get-MSGServicePrincipalCredential
 
         if (-not [string]::IsNullOrEmpty($AppId))
         {
-            $id = [guid](Get-MSGServicePrincipal -AppId $AppId -Properties id).Id
+            $id = [guid](Get-MSGServicePrincipal -Debug:$DebugPreference -Verbose:$VerbosePreference -AppId $AppId -Properties id).Id
         }
         if ([string]::IsNullOrEmpty($Id))
         {
@@ -81,11 +81,11 @@ function Get-MSGServicePrincipalCredential
         }
         if ($filter -match 'KeyCredentials')
         {
-            $credList += Get-MSGServicePrincipalKeyCredential -Id $id
+            $credList += Get-MSGServicePrincipalKeyCredential -Debug:$DebugPreference -Verbose:$VerbosePreference -Id $id
         }
         if ($filter -match 'PasswordCredentials')
         {
-            $credList += Get-MSGServicePrincipalPasswordCredential -Id $id
+            $credList += Get-MSGServicePrincipalPasswordCredential -Debug:$DebugPreference -Verbose:$VerbosePreference -Id $id
         }
         if ($credList.Count)
         {

@@ -163,7 +163,7 @@ function New-DynamicParam
         $Mandatory,
 
         [string]
-        $ParameterSetName = "__AllParameterSets",
+        $ParameterSetName = '__AllParameterSets',
 
         [System.Int32]
         $Position,
@@ -177,7 +177,7 @@ function New-DynamicParam
         [ValidateScript( {
                 if (-not ($_ -is [System.Management.Automation.RuntimeDefinedParameterDictionary] -or -not $_))
                 {
-                    throw "DPDictionary must be a System.Management.Automation.RuntimeDefinedParameterDictionary object, or not exist"
+                    throw 'DPDictionary must be a System.Management.Automation.RuntimeDefinedParameterDictionary object, or not exist'
                 }
                 $True
             })]

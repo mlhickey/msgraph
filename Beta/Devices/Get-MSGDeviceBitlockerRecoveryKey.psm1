@@ -73,7 +73,7 @@ function Get-MSGDeviceBitlockerRecoveryKey
             if ($IncludeRecoveryKeys)
             {
                 $recoveryURI = "{0}/{1}?`$select=key" -f $baseURI, $key.Id
-                $result = Invoke-SafeWebRequest -Method Get -Uri $recoveryURI -Headers $headers
+                $result = Invoke-SafeWebRequest -Method Get -Uri $recoveryURI -Headers $headers -Debug:$DebugPreference -Verbose:$VerbosePreference
                 if ($null -ne $result.Key)
                 {
                     Add-Member -InputObject $key -MemberType NoteProperty -Name 'recoveryKey' -Value $result.key

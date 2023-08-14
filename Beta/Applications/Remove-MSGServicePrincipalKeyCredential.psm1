@@ -22,16 +22,16 @@ function Remove-MSGServicePrincipalKeyCredential
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the servicePrincipal")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the servicePrincipal')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Key credential keyId to remove")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Key credential keyId to remove')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$keyId
     )
 
@@ -40,14 +40,14 @@ function Remove-MSGServicePrincipalKeyCredential
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
         $arg = $res = $null
-        $res = Get-MSGObject -Type "servicePrincipals/$id" -Filter "`$select=keyCredentials"
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id" -Filter "`$select=keyCredentials"
 
         if ($null -eq $res -or $res.StatusCode -ge 400)
         {
@@ -59,7 +59,7 @@ function Remove-MSGServicePrincipalKeyCredential
         if (($null -ne $pwdList) -and [bool]($pwdList.Where( { $_.KeyId -eq $keyId })))
         {
             $arg = [psobject]@{
-                "keyCredentials" = @($pwdList.Where( { $_.KeyId -ne $keyId }))
+                'keyCredentials' = @($pwdList.Where( { $_.KeyId -ne $keyId }))
             }
         }
         else
@@ -70,9 +70,9 @@ function Remove-MSGServicePrincipalKeyCredential
             }
         }
 
-        if ($null -ne $arg -and $PSCmdlet.ShouldProcess("$Id", "Delete keyCredentials"))
+        if ($null -ne $arg -and $PSCmdlet.ShouldProcess("$Id", 'Delete keyCredentials'))
         {
-            Set-MSGObject -Type servicePrincipals -Id $id -Body $arg
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type servicePrincipals -Id $id -Body $arg
         }
     }
 }

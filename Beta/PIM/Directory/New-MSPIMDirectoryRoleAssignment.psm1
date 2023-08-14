@@ -48,38 +48,38 @@ function New-MSPIMDirectoryRoleAssignment
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "GUID of PIM role to enable")]
-        [Alias("RoleDefinitionId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'GUID of PIM role to enable')]
+        [Alias('RoleDefinitionId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$RoleID,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
         [ValidateNotNullOrEmpty()]
-        [Alias("ObjectId", "UserPrincipalName")]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Type of assignment: Active or Eligible")]
+            HelpMessage = 'Type of assignment: Active or Eligible')]
         [ValidateSet(
-            "Active",
-            "Eligible")]
-        [string]$AssignmentType = "Eligible",
+            'Active',
+            'Eligible')]
+        [string]$AssignmentType = 'Eligible',
 
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Date role assignment expires")]
+            HelpMessage = 'Date role assignment expires')]
         [string]$AssignmentExpires,
 
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Additional information for assignment")]
+            HelpMessage = 'Additional information for assignment')]
         [string]$Reason
     )
 
@@ -97,7 +97,7 @@ function New-MSPIMDirectoryRoleAssignment
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         if (-not [string]::IsNullOrEmpty($PSBoundParameters['RoleName']))
@@ -108,7 +108,7 @@ function New-MSPIMDirectoryRoleAssignment
 
         if ([string]::IsNullOrEmpty($RoleID))
         {
-            Write-Error "You must supply a PIM role name or id"
+            Write-Error 'You must supply a PIM role name or id'
             return $null
         }
 
@@ -121,7 +121,7 @@ function New-MSPIMDirectoryRoleAssignment
         {
             $null = [System.Guid]::New($id)
             $SubjectId = Get-MSGObjectById -Id $id -Filter "`$select=id"
-            if ($SubjectId.'@odata.type' -match "#microsoft.graph.servicePrincipal")
+            if ($SubjectId.'@odata.type' -match '#microsoft.graph.servicePrincipal')
             {
                 $AssignmentType = 'Active'
             }
@@ -132,16 +132,19 @@ function New-MSPIMDirectoryRoleAssignment
             $SubjectId = (Get-MSGUser -Id $id).id
         }
 
-        if ($null -eq $SubjectId) { return $SubjectId }
+        if ($null -eq $SubjectId)
+        {
+            return $SubjectId 
+        }
 
         if (-not [string]::IsNullOrEmpty($AssignmentExpires))
         {
-            $AssignmentExpires = ([datetime]$AssignmentExpires).ToString("yyyy-MM-ddTHH:mm:ssZ")
+            $AssignmentExpires = ([datetime]$AssignmentExpires).ToString('yyyy-MM-ddTHH:mm:ssZ')
         }
 
         $schedule = [PSCustomObject][Ordered]@{
-            type          = "Once"
-            startDateTime = $Now.ToString("yyyy-MM-ddTHH:mm:ssZ")
+            type          = 'Once'
+            startDateTime = $Now.ToString('yyyy-MM-ddTHH:mm:ssZ')
             endDateTime   = $null
         }
 
@@ -149,7 +152,7 @@ function New-MSPIMDirectoryRoleAssignment
 
         if (-not [string]::IsNullOrEmpty($AssignmentExpires))
         {
-            $schedule.endDateTime = ([datetime]$AssignmentExpires).ToString("yyyy-MM-ddTHH:mm:ssZ")
+            $schedule.endDateTime = ([datetime]$AssignmentExpires).ToString('yyyy-MM-ddTHH:mm:ssZ')
         }
 
         $roleRequest = [PSCustomObject][Ordered]@{
@@ -157,14 +160,14 @@ function New-MSPIMDirectoryRoleAssignment
             resourceId       = $MSGAuthInfo.TenantId
             subjectId        = $SubjectId.id
             assignmentState  = $AssignmentType
-            type             = "AdminAdd"
+            type             = 'AdminAdd'
             reason           = $Reason
             schedule         = $schedule
         }
 
-        if ($PSCmdlet.ShouldProcess("$Id", "Create PIM directory role assignment"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Create PIM directory role assignment'))
         {
-            Set-MSGObject -Type "privilegedAccess/aadroles/roleAssignmentRequests" -Method POST -Body $roleRequest -ObjectName "MSPIM"
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/aadroles/roleAssignmentRequests' -Method POST -Body $roleRequest -ObjectName 'MSPIM'
         }
     }
 }

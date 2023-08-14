@@ -23,16 +23,16 @@ function Add-MSGDeviceRegisteredUser
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the device.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the device.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             Position = 1,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "RefObjectId of the user to add")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'RefObjectId of the user to add')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$RefObjectId
     )
 
@@ -41,7 +41,7 @@ function Add-MSGDeviceRegisteredUser
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -50,7 +50,7 @@ function Add-MSGDeviceRegisteredUser
         $body = @{
             '@odata.id' = "https://graph.microsoft.com/$($MSGAuthInfo.GraphVersion)/directoryObjects/$RefObjectId"
         }
-        Set-MSGObject -Method POST -Type "devices/$Id/registeredUsers" -Body $body
+        Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Method POST -Type "devices/$Id/registeredUsers" -Body $body
     }
 }
 

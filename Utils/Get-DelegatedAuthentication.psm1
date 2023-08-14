@@ -13,7 +13,7 @@ function Get-DelegatedAuthentication
             $timeLeft = (($MSGAuthInfo.DAToken.Expiration - (Get-Date -UFormat '%s')) - 28800)
             if ($timeLeft -gt 300)
             {
-                return $MSGAuthInfo.DAToken.access_token 
+                return $MSGAuthInfo.DAToken.access_token
             }
         }
         $Params = [ordered]@{

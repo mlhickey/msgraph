@@ -155,22 +155,22 @@ function Get-MSGGroup
 
             'id'
             {
-                Get-MSGObject -Type "groups/$id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "groups/$id" -Filter $queryFilter
                 break
             }
             'osearch'
             {
-                Get-MSGObject -Type 'groups' -SearchString "startswith(displayName,'$SearchString')" -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'groups' -SearchString "startswith(displayName,'$SearchString')" -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
             { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type 'groups' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'groups' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
             'count'
             {
-                Get-MSGObject -Type 'groups' -Filter $queryFilter -CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'groups' -Filter $queryFilter -CountOnly
             }
         }
     }

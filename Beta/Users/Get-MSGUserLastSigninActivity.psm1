@@ -33,12 +33,12 @@ function Get-MSGUserLastSigninActivity
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the User.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the User.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
@@ -54,7 +54,7 @@ function Get-MSGUserLastSigninActivity
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -71,14 +71,14 @@ function Get-MSGUserLastSigninActivity
             catch
             {
                 $id = [uri]::EscapeDataString($id)
-                $Id = (Get-MSGObject -Type ("users/{0}" -f $Id) -Filter "`$select=id").Id
+                $Id = (Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type ('users/{0}' -f $Id) -Filter "`$select=id").Id
             }
-            Get-MSGObject -Type users -Filter "id eq '$Id'&`$select=id,displayName,signinActivity"
+            Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type users -Filter "id eq '$Id'&`$select=id,displayName,signinActivity"
         }
         else
         {
             $queryFilter += "&`$select=id,displayName,signinActivity"
-            Get-MSGObject -Type users -Filter $queryFilter -All:$All
+            Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type users -Filter $queryFilter -All:$All
         }
     }
 }

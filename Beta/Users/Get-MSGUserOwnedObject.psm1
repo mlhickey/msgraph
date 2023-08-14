@@ -23,27 +23,32 @@ function Get-MSGUserOwnedObject
     If true, return all items. If false, return the number of objects specified by the Top parameter
 
     .LINK
-    https://developer.microsoft.com/en-us/graph/docs/api-reference/beta/api/user_list_ownedobjects
+    https://learn.microsoft.com/en-us/graph/api/user-list-ownedobjects?view=graph-rest-beta&tabs=http
 
     #>
 
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true,
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the User.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the User.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
+        [Parameter(ParameterSetName = 'My')]
+        [ValidateNotNullOrEmpty()]
+        [switch]$MyUser,
+
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
@@ -59,21 +64,32 @@ function Get-MSGUserOwnedObject
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
 
     process
     {
-        $id = [uri]::EscapeDataString($id)
-        $typeString = "users/{0}/ownedObjects" -f $Id
-
-        $res = Get-MSGObject -Type $typeString -Filter $queryFilter -All:$All
-        # do fixup where there are multiple datatypes
-        if ($res.StausCode -lt 300)
+        switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, "MSGraph.objects") }
+
+            'id'
+            {
+                $id = [uri]::EscapeDataString($id)
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/$id/ownedObjects" -Filter $queryFilter -All:$All
+                break
+            }
+            'my'
+            {
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'me' -Filter $queryFilter -All:$All
+                break
+            }
+        }
+        # do fixup where there are multiple datatypes
+        if ($null -ne $res)
+        {
+            $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, 'MSGraph.objects') }
         }
         $res
     }

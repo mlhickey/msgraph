@@ -40,35 +40,35 @@ function Get-MSGAdministrativeUnit
      https://docs.microsoft.com/en-us/graph/api/administrativeunit-list?view=graph-rest-beta&tabs=http
 
   #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the extension")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the extension')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Search criteria.")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Search criteria.')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )
@@ -78,7 +78,7 @@ function Get-MSGAdministrativeUnit
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -87,15 +87,15 @@ function Get-MSGAdministrativeUnit
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
-                Get-MSGObject -Type "administrativeUnits/$id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "administrativeUnits/$id" -Filter $queryFilter
                 break
             }
 
-            { $PSItem -match "topall|search" }
+            { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type "administrativeUnits" -Filter $queryFilter -All:$All
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'administrativeUnits' -Filter $queryFilter -All:$All
             }
         }
     }

@@ -26,7 +26,7 @@ function Get-MSGRiskDetection
             ValueFromPipelineByPropertyName = $true,
             HelpMessage = 'ObjectId of the group')]
         [Alias('ObjectId')]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $False,
@@ -62,6 +62,6 @@ function Get-MSGRiskDetection
         {
             $filter = "riskLevel eq '{0}'" -f $RiskLevel.ToLower()
         }
-        Get-MSGObject -Type $queryString -Filter $filter -All:$All
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $queryString -Filter $filter -All:$All
     }
 }

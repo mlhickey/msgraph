@@ -119,5 +119,6 @@ function Get-UserAuthenticationResult
         $authHeader = $MSGAuthResult.CreateAuthorizationHeader()
     }
 
+    Write-Debug "[Get-UserAuthenticationResult]: - $((Get-AzureAdAccessTokenInfo -AuthToken $MSGAuthResult).scp)"
     return $authHeader
 }

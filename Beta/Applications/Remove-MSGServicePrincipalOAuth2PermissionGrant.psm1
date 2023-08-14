@@ -22,8 +22,8 @@ function Remove-MSGServicePrincipalOAuth2PermissionGrant
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = "Id",
-            HelpMessage = "Id of the oAuth2PermissionGrant")]
+            ParameterSetName = 'Id',
+            HelpMessage = 'Id of the oAuth2PermissionGrant')]
         [string]$Id
     )
 
@@ -32,15 +32,15 @@ function Remove-MSGServicePrincipalOAuth2PermissionGrant
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        if ($PSCmdlet.ShouldProcess("$Id", "Remove oAuth2Permissiongrants assignment"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Remove oAuth2Permissiongrants assignment'))
         {
-            $res = Remove-MSGObject -Type "oAuth2Permissiongrants" -Id $id.Trim()
+            $res = Remove-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'oAuth2Permissiongrants' -Id $id.Trim()
             $global:lastexitcode = $res.StatusCode
         }
     }

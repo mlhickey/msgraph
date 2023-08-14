@@ -23,32 +23,32 @@ function Get-MSGOrganizationContact
     .LINK
     https://docs.microsoft.com/en-us/graph/api/resources/orgcontact?view=graph-rest-beta
     #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the contact")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the contact')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )
@@ -58,7 +58,7 @@ function Get-MSGOrganizationContact
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -67,14 +67,14 @@ function Get-MSGOrganizationContact
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
-                Get-MSGObject -Type "contacts/$id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "contacts/$id" -Filter $queryFilter
                 break
             }
-            "topall"
+            'topall'
             {
-                Get-MSGObject -Type "contacts" -Filter $queryFilter -All:$All
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'contacts' -Filter $queryFilter -All:$All
                 break
             }
         }

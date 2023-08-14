@@ -16,12 +16,12 @@ function Revoke-MSGUserAllRefreshToken
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id
     )
 
@@ -30,14 +30,14 @@ function Revoke-MSGUserAllRefreshToken
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
         $id = [uri]::EscapeDataString($id)
-        $idString = "{0}/invalidateAllRefreshTokens" -f $Id
-        Set-MSGObject -Type "users" -Id $idString -Method POST
+        $idString = '{0}/invalidateAllRefreshTokens' -f $Id
+        Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'users' -Id $idString -Method POST
     }
 }

@@ -21,20 +21,20 @@ function Get-MSGUserIsMemberOf
     https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/user_checkmembergroups
     #>
     [CmdletBinding()]
-    [Alias("Check-MSGGroupMembership")]
+    [Alias('Check-MSGGroupMembership')]
     param(
         [Parameter(Mandatory = $true,
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the User.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the User.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "List of group IDs to check membership in")]
+            HelpMessage = 'List of group IDs to check membership in')]
         [string[]]$GroupList
     )
 
@@ -43,16 +43,16 @@ function Get-MSGUserIsMemberOf
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
         $id = [uri]::EscapeDataString($id)
-        $body = @{ "groupIds" = $GroupList }
-        $typeString = "users/{0}/checkMemberGroups" -f $Id
+        $body = @{ 'groupIds' = $GroupList }
+        $typeString = 'users/{0}/checkMemberGroups' -f $Id
         #$typeString = "users/{0}/checkMemberObjects" -f $Id
-        Get-MSGObject -Type $typeString -Method POST -Body $body
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Method POST -Body $body
     }
 }

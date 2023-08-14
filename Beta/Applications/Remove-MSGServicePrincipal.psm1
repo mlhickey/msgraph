@@ -45,7 +45,7 @@ function Remove-MSGServicePrincipal
     {
         if ($PSCmdlet.ShouldProcess("$Id", 'Delete serviceprincipal'))
         {
-            Remove-MSGObject -Type serviceprincipal -Id $id
+            Remove-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type serviceprincipal -Id $id
         }
     }
 }

@@ -33,16 +33,16 @@ function New-MSGServicePrincipalOwner
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the serviceprincipal.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the serviceprincipal.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             Position = 1,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "RefObjectId of the user to add")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'RefObjectId of the user to add')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$RefObjectId
     )
 
@@ -51,7 +51,7 @@ function New-MSGServicePrincipalOwner
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -61,9 +61,9 @@ function New-MSGServicePrincipalOwner
             '@odata.id' = "https://graph.microsoft.com/$($MSGAuthInfo.GraphVersion)/directoryObjects/$RefObjectId"
         }
 
-        if ($PSCmdlet.ShouldProcess("$Id", "Create owner assignment"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Create owner assignment'))
         {
-            New-MSGObject -Type "servicePrincipals/$id/owners/`$ref" -Body $body
+            New-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id/owners/`$ref" -Body $body
         }
     }
 }

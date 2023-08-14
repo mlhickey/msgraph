@@ -68,18 +68,18 @@ function Get-MSPIMGroup
         {
             'id'
             {
-                Get-MSGObject -Type "privilegedAccess/aadGroups/resources/$id" -Filter $queryFilter -ObjectName 'MSPIM'
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "privilegedAccess/aadGroups/resources/$id" -Filter $queryFilter -ObjectName 'MSPIM'
                 break
             }
 
             'topall'
             {
-                Get-MSGObject -Type 'privilegedAccess/aadGroups/resources' -Filter $queryFilter -ObjectName 'MSPIM' -All:$All
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/aadGroups/resources' -Filter $queryFilter -ObjectName 'MSPIM' -All:$All
                 break
             }
             'count'
             {
-                Get-MSGObject -Type 'privilegedAccess/aadGroups/resources' -Filter $queryFilter -ObjectName 'MSPIM' -CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/aadGroups/resources' -Filter $queryFilter -ObjectName 'MSPIM' -CountOnly
             }
         }
     }

@@ -59,13 +59,13 @@ function Get-MSGservicePrincipalSignInActivities
             'appid'
             {
                 $queryFilter = "id eq '$id'" + $queryFilter
-                Get-MSGObject -Type "reports/servicePrincipalSignInActivities?`$filter=appId eq '$AppId'"
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "reports/servicePrincipalSignInActivities?`$filter=appId eq '$AppId'"
                 break
             }
             { $PSItem -match 'topall|search' }
             {
 
-                Get-MSGObject -Type 'reports/servicePrincipalSignInActivities' -Filter $queryFilter -All:$All
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'reports/servicePrincipalSignInActivities' -Filter $queryFilter -All:$All
                 break
             }
         }

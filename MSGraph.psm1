@@ -180,11 +180,10 @@ function Connect-MSG
 
     begin
     {
-        if ([string]::IsNullOrEmpty($global:_MSGMaxRetry))
+        if ($null -eq $global:_MSGMaxRetry)
         {
             Set-Variable -Name _MSGMaxRetry -Scope Global -Value 5 -Option ReadOnly
         }
-
 
         $MSGConfig = Get-MSGConfig
         $isInitialized = ($MSGConfig.Initialized -eq $true)
@@ -285,10 +284,10 @@ function Connect-MSG
     {
         $MSGAuthInfo = Get-MSGConfig
         $Params = @{
-            'Tenant'        = $MSGAuthInfo.TenantId
-            'ClientId'      = $MSGAuthInfo.ApplicationId
-            'GraphEndPoint' = $MSGAuthInfo.GraphUrl
-            'Authority'     = $MSGAuthInfo.Authority
+            Tenant        = $MSGAuthInfo.TenantId
+            ClientId      = $MSGAuthInfo.ApplicationId
+            GraphEndPoint = $MSGAuthInfo.GraphUrl
+            Authority     = $MSGAuthInfo.Authority
         }
 
         switch ($PsCmdlet.ParameterSetName.ToLower())
@@ -306,7 +305,7 @@ function Connect-MSG
                 }
                 $MSGAuthInfo.AuthType = 'User'
                 Set-MSGConfig -ConfigObject $MSGAuthInfo
-                $res = Get-UserAuthenticationResult @Params
+                $res = Get-UserAuthenticationResult @Params -Debug:$DebugPreference -Verbose:$VerbosePreference
                 break
             }
 
@@ -330,7 +329,7 @@ function Connect-MSG
                 $MSGAuthInfo.AuthType = 'App'
                 $MSGAuthInfo.User = $MSGAuthInfo.ApplicationId
                 Set-MSGConfig -ConfigObject $MSGAuthInfo
-                $res = Get-AppAuthenticationResult @Params
+                $res = Get-AppAuthenticationResult @Params -Debug:$DebugPreference -Verbose:$VerbosePreference
                 break
             }
         }

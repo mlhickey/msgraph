@@ -23,11 +23,11 @@ function Get-MSGUserScopedRoleMembership
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the User.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the User.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
-        [Parameter(ParameterSetName = "My")]
+        [Parameter(ParameterSetName = 'My')]
         [switch]$MyUser
     )
 
@@ -36,7 +36,7 @@ function Get-MSGUserScopedRoleMembership
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -45,18 +45,18 @@ function Get-MSGUserScopedRoleMembership
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
 
-            "id"
+            'id'
             {
                 $id = [uri]::EscapeDataString($id)
-                $typeString = "users/{0}/scopedRoleMemberOf" -f $Id
+                $typeString = 'users/{0}/scopedRoleMemberOf' -f $Id
                 break
             }
-            "my"
+            'my'
             {
-                $typeString = "me/scopedRoleMemberOf"
+                $typeString = 'me/scopedRoleMemberOf'
                 break
             }
         }
-        Get-MSGObject -Type $typeString
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString
     }
 }

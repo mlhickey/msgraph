@@ -42,7 +42,7 @@ function Get-MSGServicePrincipalSingleSignOnCredential
 
     process
     {
-        Get-MSGObject -Type "servicePrincipals/$id/getPasswordSingleSignOnCredentials"
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id/getPasswordSingleSignOnCredentials"
     }
 }
 

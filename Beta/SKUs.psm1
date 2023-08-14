@@ -7,24 +7,24 @@ Note: Graph doens't currently support Top as a filter so it's emulated with scop
 
 function Get-MSGSubscribedSKUs
 {
-    [CmdletBinding(DefaultParameterSetName = "noargs")]
+    [CmdletBinding(DefaultParameterSetName = 'noargs')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "TopAll",
-            HelpMessage = "Return all SKUs in directory")]
+            ParameterSetName = 'TopAll',
+            HelpMessage = 'Return all SKUs in directory')]
         [switch]$All
     )
 
@@ -33,7 +33,7 @@ function Get-MSGSubscribedSKUs
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -43,24 +43,24 @@ function Get-MSGSubscribedSKUs
         #region processParameterSet
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "noargs"
+            'noargs'
             {
-                $res = Get-MSGObject -Type "subscribedSkus"
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'subscribedSkus'
                 break
             }
-            "id"
+            'id'
             {
-                if (-not $id -match "_")
+                if (-not $id -match '_')
                 {
-                    $id = $MSGAuthInfo.TenantId + "_" + $id
+                    $id = $MSGAuthInfo.TenantId + '_' + $id
                 }
 
-                $res = Get-MSGObject -Type "subscribedSkus/$id"
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "subscribedSkus/$id"
                 break
             }
-            "topall"
+            'topall'
             {
-                $res = Get-MSGObject -Type "subscribedSkus" -All:$All
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'subscribedSkus' -All:$All
                 break
             }
         }

@@ -87,7 +87,7 @@ function Get-MSGServicePrincipalAppRoleAssignedTo
         {
             'id'
             {
-                $res = Get-MSGObject -Type "servicePrincipals/$id" -Filter $queryFilter
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id" -Filter $queryFilter
                 break
             }
             'appid'
@@ -101,12 +101,12 @@ function Get-MSGServicePrincipalAppRoleAssignedTo
                 {
                     $queryFilter = @("Appid eq '$AppId'", $queryFilter) -join '&'
                 }
-                $res = Get-MSGObject -Type 'servicePrincipals' -Filter $queryFilter
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'servicePrincipals' -Filter $queryFilter
                 break
             }
             'search'
             {
-                $res = Get-MSGObject -Type 'servicePrincipals' -Filter $queryFilter -All:$All
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'servicePrincipals' -Filter $queryFilter -All:$All
                 break
             }
             default
@@ -121,7 +121,7 @@ function Get-MSGServicePrincipalAppRoleAssignedTo
         }
         foreach ($r in $res)
         {
-            Get-MSGObject -Type "servicePrincipals/$($r.id)/appRoleAssignedTo" -All
+            Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$($r.id)/appRoleAssignedTo" -All
         }
     }
 }

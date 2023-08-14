@@ -35,39 +35,39 @@ function Get-MSGUserGroupMembership
     https://docs.microsoft.com/en-us/graph/api/user-list-memberof?view=graph-rest-beta&tabs=http
     #>
 
-    [CmdletBinding(DefaultParameterSetName = "My")]
-    [Alias("Get-MSGUserMembership")]
+    [CmdletBinding(DefaultParameterSetName = 'My')]
+    [Alias('Get-MSGUserMembership')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
-        [Parameter(ParameterSetName = "My")]
+        [Parameter(ParameterSetName = 'My')]
         [switch]$MyUser,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "Get either direct or transitive membership of specifed group")]
-        [ValidateSet("Direct", "Transitive")]
-        [string]$QueryType = "Direct",
+            HelpMessage = 'Get either direct or transitive membership of specifed group')]
+        [ValidateSet('Direct', 'Transitive')]
+        [string]$QueryType = 'Direct',
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "Return only security groups")]
+            HelpMessage = 'Return only security groups')]
         [switch]$OnlySGs,
 
         [Parameter(Mandatory = $false,
-        ParameterSetName = "Filter",
-        HelpMessage = "OData query filter")]
-            [ValidateNotNullOrEmpty()]
-            [Parameter(ParameterSetName = "Id")]
-            [Parameter(ParameterSetName = "My")]
-            [Parameter(ParameterSetName = "Count")]
-            [Parameter(ParameterSetName = "TopAll")]
-            [string]$Filter,
+            ParameterSetName = 'Filter',
+            HelpMessage = 'OData query filter')]
+        [ValidateNotNullOrEmpty()]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'My')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [string]$Filter,
 
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
@@ -81,7 +81,7 @@ function Get-MSGUserGroupMembership
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
@@ -89,35 +89,35 @@ function Get-MSGUserGroupMembership
 
     process
     {
-        if ($queryType -match "Direct")
+        if ($queryType -match 'Direct')
         {
-            $cmd = "memberOf"
-            $method = "GET"
+            $cmd = 'memberOf'
+            $method = 'GET'
 
         }
         else
         {
-            $cmd = "getMemberGroups"
-            $method = "POST"
-            $body = @{ "securityEnabledOnly" = $OnlySGs.IsPresent }
+            $cmd = 'getMemberGroups'
+            $method = 'POST'
+            $body = @{ 'securityEnabledOnly' = $OnlySGs.IsPresent }
         }
 
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 $id = [uri]::EscapeDataString($id)
-                $typeString = "users/{0}" -f $Id
+                $typeString = 'users/{0}' -f $Id
                 break
             }
-            "my"
+            'my'
             {
-                $typeString = "me"
+                $typeString = 'me'
                 break
             }
         }
-        $queryString = "{0}/{1}" -f $typeString, $cmd
+        $queryString = '{0}/{1}' -f $typeString, $cmd
 
-        Get-MSGObject -Type $queryString -Method $method -Body $body -Filter $queryFilter
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $queryString -Method $method -Body $body -Filter $queryFilter
     }
 }

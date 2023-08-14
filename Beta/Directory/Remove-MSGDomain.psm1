@@ -21,7 +21,7 @@ function Remove-MSGDomain
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Name of the domain.")]
+            HelpMessage = 'Name of the domain.')]
         [string]$Name
     )
 
@@ -30,15 +30,15 @@ function Remove-MSGDomain
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        if ($PSCmdlet.ShouldProcess("$Name", "Remove domain"))
+        if ($PSCmdlet.ShouldProcess("$Name", 'Remove domain'))
         {
-            Remove-MSGObject -Type "domains" -Id $Name
+            Remove-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'domains' -Id $Name
         }
     }
 }

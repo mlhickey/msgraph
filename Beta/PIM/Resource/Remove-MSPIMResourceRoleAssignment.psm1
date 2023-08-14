@@ -75,7 +75,7 @@ function Remove-MSPIMResourceRoleAssignment
             return $null
         }
 
-        $subjectId = (Get-MSGObject -Type "users/$id" -Filter "`$select=id").Id
+        $subjectId = (Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/$id" -Filter "`$select=id").Id
 
         $body = [PSCustomObject][Ordered]@{
             assignmentState  = $AssignmentType
@@ -88,7 +88,7 @@ function Remove-MSPIMResourceRoleAssignment
 
         if ($PSCmdlet.ShouldProcess("$Id", 'Remove resource assignment'))
         {
-            Set-MSGObject -Type 'privilegedAccess/azureResources/roleAssignmentRequests' -Method POST -Body $body -ObjectName 'MSPIM'
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/azureResources/roleAssignmentRequests' -Method POST -Body $body -ObjectName 'MSPIM'
         }
     }
 }

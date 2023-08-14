@@ -21,14 +21,14 @@ function Remove-MSGGroupMember
     param(
         [Parameter(Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the group")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the group')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the user")]
+            HelpMessage = 'ObjectId of the user')]
         [string]$MemberId
     )
 
@@ -37,16 +37,16 @@ function Remove-MSGGroupMember
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        if ($PSCmdlet.ShouldProcess("$Id", "Delete"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Delete'))
         {
-            $queryString = "groups/{0}/members/{1}" -f $Id, $MemberId
-            Remove-MSGObject -Type $queryString -Id "`$Ref"
+            $queryString = 'groups/{0}/members/{1}' -f $Id, $MemberId
+            Remove-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $queryString -Id "`$Ref"
         }
     }
 }

@@ -25,37 +25,37 @@ function Get-MSGGroupAppAssignment
     .LINK
     https://docs.microsoft.com/en-us/graph/api/approleassignment-get?view=graph-rest-beta&tabs=http
     #>
-    [CmdletBinding(DefaultParameterSetName = "Id")]
+    [CmdletBinding(DefaultParameterSetName = 'Id')]
     param(
         # UserprincipalName or objectId
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the group.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the group.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Partial/complete displayname of the group.")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Partial/complete displayname of the group.')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )
@@ -65,7 +65,7 @@ function Get-MSGGroupAppAssignment
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -74,31 +74,34 @@ function Get-MSGGroupAppAssignment
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
-                $res = Get-MSGObject -Type "groups/$id" -Filter $queryFilter
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "groups/$id" -Filter $queryFilter
                 break
             }
-            "osearch"
+            'osearch'
             {
-                $res = Get-MSGObject -Type "groups" -SearchString "startswith(displayName,'$SearchString')" -Filter $queryFilter -All:$All
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'groups' -SearchString "startswith(displayName,'$SearchString')" -Filter $queryFilter -All:$All
                 break
             }
-            "search"
+            'search'
             {
-                $res = Get-MSGObject -Type "groups" -Filter $queryFilter -All:$All
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'groups' -Filter $queryFilter -All:$All
                 break
             }
             default
             {
-                Write-Warning "You must specify either a group ObjectId or searchable name"
+                Write-Warning 'You must specify either a group ObjectId or searchable name'
                 return $null
             }
         }
-        if ($res.StatusCode -ge 400) { return $res }
+        if ($res.StatusCode -ge 400)
+        {
+            return $res 
+        }
         foreach ($r in $res)
         {
-            Get-MSGObject -Type "groups/$($r.id)/appRoleAssignments" -Filter $queryFilter -All:$All
+            Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "groups/$($r.id)/appRoleAssignments" -Filter $queryFilter -All:$All
         }
     }
 }

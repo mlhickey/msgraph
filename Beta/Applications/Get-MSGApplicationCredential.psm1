@@ -74,7 +74,7 @@ function Get-MSGApplicationCredential
 
         if (-not [string]::IsNullOrEmpty($AppId))
         {
-            $id = [guid](Get-MSGApplication -AppId $AppId -Properties id).Id
+            $id = [guid](Get-MSGApplication -Debug:$DebugPreference -Verbose:$VerbosePreference -AppId $AppId -Properties id).Id
         }
         if ([string]::IsNullOrEmpty($Id))
         {
@@ -84,11 +84,11 @@ function Get-MSGApplicationCredential
 
         if ($filter -match 'KeyCredentials')
         {
-            $credList += @(Get-MSGApplicationKeyCredential -Id $id)
+            $credList += @(Get-MSGApplicationKeyCredential -Debug:$DebugPreference -Verbose:$VerbosePreference -Id $id)
         }
         if ($filter -match 'PasswordCredentials')
         {
-            $credList += @(Get-MSGApplicationPasswordCredential -Id $id)
+            $credList += @(Get-MSGApplicationPasswordCredential -Debug:$DebugPreference -Verbose:$VerbosePreference -Id $id)
         }
         if ($credList.Count)
         {

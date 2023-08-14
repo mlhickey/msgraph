@@ -40,45 +40,45 @@ function New-MSPIMResourceRoleAssignment
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "GUID of PIM role to enable")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
-        [Alias("RoleDefinitionId")]
+            HelpMessage = 'GUID of PIM role to enable')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
+        [Alias('RoleDefinitionId')]
         [string]$RoleID,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
         [ValidateNotNullOrEmpty()]
-        [Alias("ObjectId", "UserPrincipalName")]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the resource being assigned")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the resource being assigned')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$ResourceId,
 
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
         [ValidateSet(
-            "Active",
-            "Eligible")]
-        [string]$AssignmentType = "Eligible",
+            'Active',
+            'Eligible')]
+        [string]$AssignmentType = 'Eligible',
 
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Date role assignment expires")]
+            HelpMessage = 'Date role assignment expires')]
         [string]$AssignmentExpires,
 
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Additional information for assignment")]
+            HelpMessage = 'Additional information for assignment')]
         [string]$Reason
     )
 
@@ -96,7 +96,7 @@ function New-MSPIMResourceRoleAssignment
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         if (-not [string]::IsNullOrEmpty($PSBoundParameters['RoleName']))
@@ -107,7 +107,7 @@ function New-MSPIMResourceRoleAssignment
 
         if ([string]::IsNullOrEmpty($RoleID))
         {
-            Write-Error "You must supply a role id"
+            Write-Error 'You must supply a role id'
             return $null
         }
 
@@ -116,23 +116,26 @@ function New-MSPIMResourceRoleAssignment
 
     process
     {
-        $SubjectId = Get-MSGObject -Type "users/$id" -Filter "`$select=id"
+        $SubjectId = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/$id" -Filter "`$select=id"
 
-        if ($null -eq $SubjectId) { return $SubjectId }
+        if ($null -eq $SubjectId)
+        {
+            return $SubjectId 
+        }
 
         if (-not [string]::IsNullOrEmpty($AssignmentExpires))
         {
-            $AssignmentExpires = ([datetime]$AssignmentExpires).ToString("yyyy-MM-ddTHH:mm:ssZ")
+            $AssignmentExpires = ([datetime]$AssignmentExpires).ToString('yyyy-MM-ddTHH:mm:ssZ')
         }
 
         if ([string]::IsNullOrEmpty($AssignmentExpires))
         {
-            $AssignmentExpires = $Now.AddYears(1).ToString("yyyy-MM-ddTHH:mm:ssZ")
+            $AssignmentExpires = $Now.AddYears(1).ToString('yyyy-MM-ddTHH:mm:ssZ')
         }
 
         $schedule = [PSCustomObject][Ordered]@{
-            type          = "Once"
-            startDateTime = $Now.ToString("yyyy-MM-ddTHH:mm:ssZ")
+            type          = 'Once'
+            startDateTime = $Now.ToString('yyyy-MM-ddTHH:mm:ssZ')
             endDateTime   = $AssignmentExpires
         }
 
@@ -141,14 +144,14 @@ function New-MSPIMResourceRoleAssignment
             resourceId       = $ResourceId
             subjectId        = $SubjectId
             assignmentState  = $AssignmentType
-            type             = "AdminAdd"
+            type             = 'AdminAdd'
             reason           = $Reason
             schedule         = $schedule
         }
 
-        if ($PSCmdlet.ShouldProcess("$Id", "Create resource assignment"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Create resource assignment'))
         {
-            Set-MSGObject -Type "privilegedAccess/azureResources/roleAssignmentRequests" -Method POST -Body $roleRequest -ObjectName "MSPIM"
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/azureResources/roleAssignmentRequests' -Method POST -Body $roleRequest -ObjectName 'MSPIM'
         }
     }
 }

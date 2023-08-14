@@ -19,9 +19,9 @@ function Restore-MSGDeletedItem
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $false,
-            HelpMessage = "Type of deleted directory object to return, user or group")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Type of deleted directory object to return, user or group')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id
     )
 
@@ -30,16 +30,16 @@ function Restore-MSGDeletedItem
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        if ($PSCmdlet.ShouldProcess("$Id", "Restore deleted item"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Restore deleted item'))
         {
             $Type = "directory/deletedItems/$Id/restore"
-            Set-MSGObject -Type $Type -Method POST
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $Type -Method POST
         }
     }
 }

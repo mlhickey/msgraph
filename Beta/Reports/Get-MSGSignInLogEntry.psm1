@@ -17,8 +17,8 @@ $script:signInTable = @{
     'OperatingSystem'         = "(deviceDetail/operatingSystem eq 'FARG' or startsWith(deviceDetail/operatingSystem, 'FARG'))"
     'CorrelationId'           = "correlationId eq 'FARG'"
     'IsRisky'                 = "isRisky eq 'FARG'"
-    'StartDate'               = "FARG"
-    'EndDate'                 = "FARG"
+    'StartDate'               = 'FARG'
+    'EndDate'                 = 'FARG'
 }
 function Get-MSGSignInLogEntry
 {
@@ -55,8 +55,8 @@ function Get-MSGSignInLogEntry
     dynamicparam
     {
         $paramTable = $signInTable
-        $dateParam = "createdDateTime"
-        $auditType = "signIns"
+        $dateParam = 'createdDateTime'
+        $auditType = 'signIns'
 
         $Dictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
         foreach ($paramName in $paramTable.GetEnumerator())
@@ -71,7 +71,7 @@ function Get-MSGSignInLogEntry
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         $today = (Get-Date)
@@ -101,7 +101,7 @@ function Get-MSGSignInLogEntry
         #region DateProcessing
         if ($EndDate -and ($StartDate -gt $EndDate))
         {
-            throw "StarDate is greater than EndDate"
+            throw 'StarDate is greater than EndDate'
         }
         if ($StartDate -and $EndDate)
         {
@@ -123,25 +123,28 @@ function Get-MSGSignInLogEntry
             if ($paramTable.Contains($key))
             {
                 $queryFilter += $($paramTable[$key])
-                $queryFilter = $queryFilter.Replace("FARG", $value)
+                $queryFilter = $queryFilter.Replace('FARG', $value)
             }
         }
         #
         if (-not [string]::IsNullOrEmpty($queryFilter))
         {
-            [string]$filter = "(" + ($queryFilter -join ' and ') + ")"
+            [string]$filter = '(' + ($queryFilter -join ' and ') + ')'
         }
         if (-not $All -and $Top)
         {
             if ($filter)
             {
-                $filter += "&"
+                $filter += '&'
             }
             $filter += "`$top=$top"
         }
 
-        $res = Get-MSGObject -Type "auditLogs/$auditType" -Filter $Filter -All:$All
-        if ($res.StatusCode -ge 400) { return $res }
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "auditLogs/$auditType" -Filter $Filter -All:$All
+        if ($res.StatusCode -ge 400)
+        {
+            return $res 
+        }
         if ($ResolveIds.IsPresent)
         {
             foreach ($r in $res)
@@ -149,6 +152,9 @@ function Get-MSGSignInLogEntry
                 New-SigninRecord -record $r
             }
         }
-        else { $res }
+        else
+        {
+            $res 
+        }
     }
 }

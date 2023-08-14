@@ -39,27 +39,27 @@ function Get-MSGDirectorySetting
     .LINK
     https://docs.microsoft.com/en-us/graph/api/resources/directorysetting?view=graph-rest-beta
 #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the extension")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the extension')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )
@@ -69,7 +69,7 @@ function Get-MSGDirectorySetting
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -78,14 +78,14 @@ function Get-MSGDirectorySetting
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
-                Get-MSGObject -Type "settings/$Id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "settings/$Id" -Filter $queryFilter
                 break
             }
-            "topall"
+            'topall'
             {
-                Get-MSGObject -Type "settings" -Filter $queryFilter -All:$All
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'settings' -Filter $queryFilter -All:$All
                 break
             }
         }

@@ -16,12 +16,12 @@ function Remove-MSGUser
     [CmdletBinding(ConfirmImpact = 'High', SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id
     )
 
@@ -30,16 +30,16 @@ function Remove-MSGUser
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        if ($PSCmdlet.ShouldProcess("$Id", "Delete user"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Delete user'))
         {
             $id = [uri]::EscapeDataString($id)
-            Set-MSGObject -Type "users" -Id $Id -Method DELETE
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'users' -Id $Id -Method DELETE
         }
     }
 }

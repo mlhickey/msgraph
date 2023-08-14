@@ -51,10 +51,10 @@ function Get-MSGApplicationAssignedPolicy
     process
     {
         $type = '{0}Policies' -f (camelCase $PolicyType)
-        $res = Get-MSGObject -Type "applications/$Id/$type"
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "applications/$Id/$type"
         if ($res.StatusCode -ge 400)
         {
-            return $res 
+            return $res
         }
         $res.appRoleAssignments
     }

@@ -19,30 +19,30 @@ function Get-MSPIMResource
      https://docs.microsoft.com/en-us/graph/api/governanceresource-list?view=graph-rest-beta&tabs=http
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the specific resource")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the specific resource')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
+            ParameterSetName = 'Search',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the specific resource")]
+            HelpMessage = 'Id of the specific resource')]
         [string]$SearchString,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )
@@ -52,7 +52,7 @@ function Get-MSPIMResource
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         #$null= $PSBoundParameters.Remove("SearchString")
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
@@ -62,15 +62,15 @@ function Get-MSPIMResource
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
-                Get-MSGObject -Type "privilegedAccess/azureResources/resources/$id" -Filter $queryFilter -ObjectName "MSPIM"
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "privilegedAccess/azureResources/resources/$id" -Filter $queryFilter -ObjectName 'MSPIM'
                 break
             }
 
-            "topall"
+            'topall'
             {
-                Get-MSGObject -Type "privilegedAccess/azureResources/resources" -Filter $queryFilter -ObjectName "MSPIM" -All:$All
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/azureResources/resources' -Filter $queryFilter -ObjectName 'MSPIM' -All:$All
                 break
             }
         }

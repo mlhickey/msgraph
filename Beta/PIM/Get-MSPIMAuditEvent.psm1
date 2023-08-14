@@ -42,81 +42,81 @@ function Get-MSPIMAuditEvent
 
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
-    [CmdletBinding(DefaultParameterSetName = "Common")]
+    [CmdletBinding(DefaultParameterSetName = 'Common')]
     param(
-        [Parameter(ParameterSetName = "Common")]
-        [Parameter(ParameterSetName = "RoleName")]
-        [Parameter(ParameterSetName = "RoleId")]
+        [Parameter(ParameterSetName = 'Common')]
+        [Parameter(ParameterSetName = 'RoleName')]
+        [Parameter(ParameterSetName = 'RoleId')]
         [ValidateSet(
-            "Add member to role completed (PIM activation)",
-            "Add member to role requested (PIM activation)",
-            "Remove member from role (PIM activation expired)",
-            "Add eligible member to role in PIM completed (timebound)",
-            "Add eligible member to role in PIM requested (renew)",
-            "Remove member from role completed (PIM deactivate)",
-            "Remove member from role requested (PIM deactivate)",
-            "Remove permanent eligible role assignment",
-            "Remove eligible member from role in PIM completed (timebound)",
-            "Offboarded resource from PIM",
-            "Add eligible member to role in PIM completed (permanent)",
-            "Add eligible member to role in PIM requested (permanent)",
-            "Add member to role in PIM completed (timebound)",
-            "Add member to role in PIM requested (timebound)",
-            "Process request",
-            "Process role update request",
-            "Resolve PIM alert",
-            "Remove eligible member from role in PIM requested (timebound)",
-            "Remove eligible member from role in PIM completed (permanent)",
-            "Remove eligible member from role in PIM requested (permanent)",
-            "Remove member from role in PIM completed (permanent)",
-            "Remove member from role in PIM requested (permanent)",
-            "Remove member from role in PIM completed (timebound)",
-            "Add eligible member to role in PIM requested (timebound)"
+            'Add member to role completed (PIM activation)',
+            'Add member to role requested (PIM activation)',
+            'Remove member from role (PIM activation expired)',
+            'Add eligible member to role in PIM completed (timebound)',
+            'Add eligible member to role in PIM requested (renew)',
+            'Remove member from role completed (PIM deactivate)',
+            'Remove member from role requested (PIM deactivate)',
+            'Remove permanent eligible role assignment',
+            'Remove eligible member from role in PIM completed (timebound)',
+            'Offboarded resource from PIM',
+            'Add eligible member to role in PIM completed (permanent)',
+            'Add eligible member to role in PIM requested (permanent)',
+            'Add member to role in PIM completed (timebound)',
+            'Add member to role in PIM requested (timebound)',
+            'Process request',
+            'Process role update request',
+            'Resolve PIM alert',
+            'Remove eligible member from role in PIM requested (timebound)',
+            'Remove eligible member from role in PIM completed (permanent)',
+            'Remove eligible member from role in PIM requested (permanent)',
+            'Remove member from role in PIM completed (permanent)',
+            'Remove member from role in PIM requested (permanent)',
+            'Remove member from role in PIM completed (timebound)',
+            'Add eligible member to role in PIM requested (timebound)'
         )]
         [string]$RequestType,
 
-        [Parameter(ParameterSetName = "RoleId",
+        [Parameter(ParameterSetName = 'RoleId',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "GUID of PIM role")]
-        [Alias("RoleDefinitionId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'GUID of PIM role')]
+        [Alias('RoleDefinitionId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$RoleID,
 
-        [Parameter(ParameterSetName = "Common",
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
-        [Parameter(ParameterSetName = "RoleName")]
-        [Parameter(ParameterSetName = "RoleId")]
+        [Parameter(ParameterSetName = 'Common',
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
+        [Parameter(ParameterSetName = 'RoleName')]
+        [Parameter(ParameterSetName = 'RoleId')]
         [ValidateNotNullOrEmpty()]
-        [Alias("ObjectId", "UserPrincipalName")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [Alias('ObjectId', 'UserPrincipalName')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
-        [Parameter(ParameterSetName = "Common",
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the user.")]
-        [Parameter(ParameterSetName = "RoleName")]
-        [Parameter(ParameterSetName = "RoleId")]
+        [Parameter(ParameterSetName = 'Common',
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the user.')]
+        [Parameter(ParameterSetName = 'RoleName')]
+        [Parameter(ParameterSetName = 'RoleId')]
         [ValidateNotNullOrEmpty()]
         [string]$DisplayName,
 
-        [Parameter(ParameterSetName = "Common",
+        [Parameter(ParameterSetName = 'Common',
             Mandatory = $False)]
-        [Parameter(ParameterSetName = "RoleName")]
-        [Parameter(ParameterSetName = "RoleId")]
+        [Parameter(ParameterSetName = 'RoleName')]
+        [Parameter(ParameterSetName = 'RoleId')]
         [datetime]$StartDate = (Get-Date).AddDays(-30),
 
-        [Parameter(ParameterSetName = "Common",
+        [Parameter(ParameterSetName = 'Common',
             Mandatory = $False)]
-        [Parameter(ParameterSetName = "RoleName")]
-        [Parameter(ParameterSetName = "RoleId")]
+        [Parameter(ParameterSetName = 'RoleName')]
+        [Parameter(ParameterSetName = 'RoleId')]
         [datetime]$EndDate = (Get-Date),
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
+        [Parameter(ParameterSetName = 'TopAll')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )
@@ -135,7 +135,7 @@ function Get-MSPIMAuditEvent
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -144,63 +144,79 @@ function Get-MSPIMAuditEvent
         [string[]]$filterList = $null
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "rolename"
+            'rolename'
             {
                 $RoleName = $PSBoundParameters['RoleName']
                 $roleId = $roleName2Id.Item($RoleName)
                 $filterList += "roleId eq '${roleId}'"
                 break
             }
-            "roleid"
+            'roleid'
             {
-                try { $null = $roleId2Name.Item($RoleID) }
-                catch { Write-Error "$roleId is not currently in the list of supported PIM roles"; return $null }
+                try
+                {
+                    $null = $roleId2Name.Item($RoleID) 
+                }
+                catch
+                {
+                    Write-Error "$roleId is not currently in the list of supported PIM roles"; return $null 
+                }
                 $filterList += "roleId eq '${roleId}'"
                 break
             }
         }
 
         $auditParams = @{}
-        $auditParams.Add("LoggedByService", "PIM")
-        $auditParams.Add("Category", "RoleManagement")
+        $auditParams.Add('LoggedByService', 'PIM')
+        $auditParams.Add('Category', 'RoleManagement')
 
         if (-not [string]::IsNullOrEmpty($Id))
         {
-            if ($id.IndexOf("@" -gt 0))
+            if ($id.IndexOf('@' -gt 0))
             {
-                $auditParams.Add("InitiatedByUserPrincipalName", $id)
+                $auditParams.Add('InitiatedByUserPrincipalName', $id)
             }
             else
             {
-                $auditParams.Add("InitiatedByuserid", $id)
+                $auditParams.Add('InitiatedByuserid', $id)
             }
         }
         elseif (-not [string]::IsNullOrEmpty($DisplayName))
         {
-            $auditParams.Add("InitiatedByUserDisplayName", $DisplayName)
+            $auditParams.Add('InitiatedByUserDisplayName', $DisplayName)
         }
 
         if (-not [string]::IsNullOrEmpty($RequestType))
         {
-            $auditParams.Add("ActivityDisplayName", $RequestType)
+            $auditParams.Add('ActivityDisplayName', $RequestType)
         }
 
         if (-not [string]::IsNullOrEmpty($startDate))
         {
-            $auditParams.Add("StartDate", $startDate)
+            $auditParams.Add('StartDate', $startDate)
         }
         if (-not [string]::IsNullOrEmpty($EndDate))
         {
-            if ([string]::IsNullOrEmpty($StartDate)) { throw "EndDate specified with no StarDate" }
-            $auditParams.Add("EndDate", $endDate)
+            if ([string]::IsNullOrEmpty($StartDate))
+            {
+                throw 'EndDate specified with no StarDate' 
+            }
+            $auditParams.Add('EndDate', $endDate)
         }
 
         if (-not [string]::IsNullOrEmpty($roleId))
         {
-            $auditParams.Add("TargetResourceId", $roleId)
+            $auditParams.Add('TargetResourceId', $roleId)
         }
 
-        if ($All.IsPresent) { $auditParams.Add("All", $All) } else { $auditParams.Add("Top", $Top) }
-        Get-MSGAuditLogDirectoryEntries @auditParams
+        if ($All.IsPresent)
+        {
+            $auditParams.Add('All', $All) 
+        }
+        else
+        {
+            $auditParams.Add('Top', $Top) 
+        }
+        Get-MSGAuditLogDirectoryEntries @auditParams -Debug:$DebugPreference -Verbose:$VerbosePreference
     }
 }

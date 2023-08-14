@@ -102,7 +102,7 @@ function GetPermissionName
     {
         try
         {
-            $sp = Get-MSGObject -Type servicePrincipals -Filter "Appid eq '$AppId'"
+            $sp = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type servicePrincipals -Filter "Appid eq '$AppId'"
         }
         catch
         {
@@ -131,7 +131,7 @@ function GetResourceName
     )
     if (-not $resourceAppidToName.Contains($AppId))
     {
-        $sp = Get-MSGObject -Type servicePrincipals -Filter "Appid eq '$AppId'"
+        $sp = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type servicePrincipals -Filter "Appid eq '$AppId'"
         $resourceAppidToName.Add($AppId, $sp.displayName)
     }
     $resourceAppidToName[$AppId]
@@ -420,22 +420,22 @@ function Get-MSGApplicationPermission
         {
             'appid'
             {
-                $allAzureApplications = Get-MSGObject -Type applications -Filter "Appid eq '$AppId'&$propSet"
+                $allAzureApplications = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type applications -Filter "Appid eq '$AppId'&$propSet"
                 break
             }
             'objectid'
             {
-                $allAzureApplications = Get-MSGObject -Type applications -Filter "id eq '$Id'&$propset"
+                $allAzureApplications = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type applications -Filter "id eq '$Id'&$propset"
                 break
             }
             'searchstring'
             {
-                $allAzureApplications = Get-MSGObject -Type applications -SearchString "startswith(displayName,'$SearchString')" -Filter $propSet -All:$All
+                $allAzureApplications = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type applications -SearchString "startswith(displayName,'$SearchString')" -Filter $propSet -All:$All
                 break
             }
             'topall'
             {
-                $allAzureApplications = Get-MSGObject -Type applications -Filter $propSet -All:$All
+                $allAzureApplications = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type applications -Filter $propSet -All:$All
             }
         }
 

@@ -15,12 +15,12 @@ function Get-MSGOrganization
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties
     )
@@ -30,13 +30,13 @@ function Get-MSGOrganization
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
 
     process
     {
-        Get-MSGObject -Type "organization" -Filter $queryFilter
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'organization' -Filter $queryFilter
     }
 }

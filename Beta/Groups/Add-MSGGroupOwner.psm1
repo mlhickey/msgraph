@@ -19,35 +19,35 @@ function Add-MSGGroupOwner
     #>
 
     [CmdletBinding()]
-    [Alias("Add-MSGgraphGroupOwner")]
+    [Alias('Add-MSGgraphGroupOwner')]
     param(
         [Parameter(Mandatory = $true,
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the group")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the group')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             Position = 1,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the user to add")]
-        [Alias("RefObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the user to add')]
+        [Alias('RefObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$ReFId,
 
         [Parameter(Mandatory = $false,
             Position = 1,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Type of owner to add: User or ServicePrincipal")]
+            HelpMessage = 'Type of owner to add: User or ServicePrincipal')]
         [ValidateSet(
-            "User",
-            "ServicePrincipal")]
-        [string]$OwnerType = "User"
+            'User',
+            'ServicePrincipal')]
+        [string]$OwnerType = 'User'
     )
 
     begin
@@ -55,16 +55,16 @@ function Add-MSGGroupOwner
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
         $ownerType = camelCase $OwnerType
-        $typeString = "groups/{0}/owners" -f $Id
-        $bodyString = "{0}/{1}/{2}s/{3}" -f $MSGAuthInfo.GraphUrl, $MSGAuthInfo.GraphVersion, $ownerType, $ReFId
-        $body = @{ "@odata.id" = $bodyString }
-        Set-MSGObject -Type $typeString -Id "`$ref" -Body $body -Method POST
+        $typeString = 'groups/{0}/owners' -f $Id
+        $bodyString = '{0}/{1}/{2}s/{3}' -f $MSGAuthInfo.GraphUrl, $MSGAuthInfo.GraphVersion, $ownerType, $ReFId
+        $body = @{ '@odata.id' = $bodyString }
+        Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Id "`$ref" -Body $body -Method POST
     }
 }

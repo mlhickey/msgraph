@@ -8,7 +8,7 @@ function New-RoleMapping
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         $global:roleId2Name = @{}
@@ -19,12 +19,12 @@ function New-RoleMapping
 
     process
     {
-        (Get-MSGObject -Type "privilegedAccess/aadroles/resources/$($MSGAuthInfo.TenantId)/roleDefinitions" -Filter "`$select=id,displayName") | ForEach-Object { $roleDefList.Add($_.Id, $_.displayName) }
-        (Get-MSGObject -Type "privilegedAccess/aadroles/resources/$($MSGAuthInfo.TenantId)/roleSettings" -Filter "`$select=RoleDefinitionId,userMemberSettings") | ForEach-Object { $roleSettingsMap.Add($_.RoleDefinitionId, $_.userMemberSettings) }
+        (Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "privilegedAccess/aadroles/resources/$($MSGAuthInfo.TenantId)/roleDefinitions" -Filter "`$select=id,displayName") | ForEach-Object { $roleDefList.Add($_.Id, $_.displayName) }
+        (Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "privilegedAccess/aadroles/resources/$($MSGAuthInfo.TenantId)/roleSettings" -Filter "`$select=RoleDefinitionId,userMemberSettings") | ForEach-Object { $roleSettingsMap.Add($_.RoleDefinitionId, $_.userMemberSettings) }
 
         foreach ($role in $roleDefList.GetEnumerator())
         {
-            $Expiry = $roleSettingsMap.Item($role.Name).Where( { $_.ruleIdentifier -eq "ExpirationRule" })
+            $Expiry = $roleSettingsMap.Item($role.Name).Where( { $_.ruleIdentifier -eq 'ExpirationRule' })
             $Expiry = (ConvertFrom-Json $Expiry.setting)
             $duration = ($Expiry.maximumGrantPeriodInMinutes / 60)
             $o = [PSCustomObject][Ordered]@{
@@ -37,7 +37,7 @@ function New-RoleMapping
         }
 
         [string[]]$options = @($global:RoleName2Id.Keys | Sort-Object)
-        $helpMessage = "PIM role name: {0}" -f ($options -join ", " )
-        New-DynamicParam -Name RoleName -ValidateSet $options -ParameterSetName "RoleName" -ValueFromPipelineByPropertyName -HelpMessage $helpMessage
+        $helpMessage = 'PIM role name: {0}' -f ($options -join ', ' )
+        New-DynamicParam -Name RoleName -ValidateSet $options -ParameterSetName 'RoleName' -ValueFromPipelineByPropertyName -HelpMessage $helpMessage
     }
 }

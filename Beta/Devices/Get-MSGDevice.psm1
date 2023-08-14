@@ -128,18 +128,18 @@ function Get-MSGDevice
         {
             'id'
             {
-                Get-MSGObject -Type "devices/$Id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "devices/$Id" -Filter $queryFilter
                 break
             }
 
             { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type 'devices' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'devices' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
             'count'
             {
-                Get-MSGObject -Type 'devices' -Filter $queryFilter -CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'devices' -Filter $queryFilter -CountOnly
             }
 
         }

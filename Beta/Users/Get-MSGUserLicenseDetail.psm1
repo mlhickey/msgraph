@@ -20,18 +20,18 @@ function Get-MSGUserLicenseDetail
     https://docs.microsoft.com/en-us/graph/api/user-getmemberobjects?view=graph-rest-beta&tabs=http
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
-    [CmdletBinding(DefaultParameterSetName = "My")]
+    [CmdletBinding(DefaultParameterSetName = 'My')]
     param(
         [Parameter(Mandatory = $false,
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the User.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the User.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
 
-        [Parameter(ParameterSetName = "My")]
+        [Parameter(ParameterSetName = 'My')]
         [switch]$MyUser
     )
 
@@ -40,7 +40,7 @@ function Get-MSGUserLicenseDetail
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -48,24 +48,24 @@ function Get-MSGUserLicenseDetail
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 $id = [uri]::EscapeDataString($id)
-                $typeString = "users/{0}/licenseDetails" -f $Id
+                $typeString = 'users/{0}/licenseDetails' -f $Id
                 break
             }
-            "my"
+            'my'
             {
-                $typeString = "me/licenseDetails"
+                $typeString = 'me/licenseDetails'
                 break
             }
         }
 
-        $res = Get-MSGObject -Type $typeString
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString
 
         if ($null -ne $res -and $res.StatusCode -lt 300)
         {
-            $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, "MSGraph.licenseDetails") }
+            $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, 'MSGraph.licenseDetails') }
         }
         $res
     }

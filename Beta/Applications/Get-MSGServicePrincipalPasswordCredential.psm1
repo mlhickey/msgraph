@@ -28,19 +28,19 @@ function Get-MSGServicePrincipalPasswordCredential
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the application or servicePrincipal.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the application or servicePrincipal.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "AppId",
-            HelpMessage = "AppId of the application")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            ParameterSetName = 'AppId',
+            HelpMessage = 'AppId of the application')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$AppId
     )
 
@@ -49,7 +49,7 @@ function Get-MSGServicePrincipalPasswordCredential
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -57,18 +57,21 @@ function Get-MSGServicePrincipalPasswordCredential
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
-                $res = Get-MSGObject -Type "servicePrincipals/$Id" -Filter "`$select=passwordCredentials"
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$Id" -Filter "`$select=passwordCredentials"
                 break
             }
-            "appid"
+            'appid'
             {
-                $res = Get-MSGObject -Type "servicePrincipals" -Filter "appId eq '$AppId'&`$select=passwordCredentials"
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'servicePrincipals' -Filter "appId eq '$AppId'&`$select=passwordCredentials"
                 break
             }
         }
-        if ($res.StatusCode -ge 400) { return $res }
+        if ($res.StatusCode -ge 400)
+        {
+            return $res 
+        }
         $res | Select-Object -ExpandProperty passwordCredentials
     }
 }

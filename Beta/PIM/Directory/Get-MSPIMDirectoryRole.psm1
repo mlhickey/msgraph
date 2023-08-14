@@ -29,16 +29,16 @@ function Get-MSPIMDirectoryRole
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
-        $res = Get-MSGObject -Type "privilegedAccess/aadroles/resources/$($MSGAuthInfo.TenantId)/roleDefinitions" -ObjectName "MSPIM"
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "privilegedAccess/aadroles/resources/$($MSGAuthInfo.TenantId)/roleDefinitions" -ObjectName 'MSPIM'
         if ($null -ne $res -and $res.StatusCode -lt 300)
         {
-            $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, "MSPIM.privilegedAccess.directoryRoles") }
+            $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, 'MSPIM.privilegedAccess.directoryRoles') }
         }
         $res
     }

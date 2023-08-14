@@ -175,12 +175,12 @@
             'id'
             {
                 $id = [uri]::EscapeDataString($id)
-                Get-MSGObject -Type "users/$id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "users/$id" -Filter $queryFilter
                 break
             }
             'my'
             {
-                Get-MSGObject -Type 'me' -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'me' -Filter $queryFilter
                 break
             }
             'search'
@@ -188,22 +188,22 @@
                 if ($SearchString -match '\w:\w')
                 {
                     $queryFilter += "`$search=`"$SearchString`""
-                    Get-MSGObject -Type 'users' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                    Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'users' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 }
                 else
                 {
-                    Get-MSGObject -Type 'users' -SearchString (BuildUserANRSearchString -searchString $SearchString) -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                    Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'users' -SearchString (BuildUserANRSearchString -searchString $SearchString) -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 }
                 break
             }
             { $PSItem -match 'topall|filter' }
             {
-                Get-MSGObject -Type 'users' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'users' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
             'count'
             {
-                Get-MSGObject -Type 'users' -Filter $queryFilter -CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'users' -Filter $queryFilter -CountOnly
             }
         }
     }

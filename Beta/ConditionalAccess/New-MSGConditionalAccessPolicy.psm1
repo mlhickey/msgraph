@@ -23,24 +23,24 @@ function New-MSGConditionalAccessPolicy
     [CmdletBinding(ConfirmImpact = 'High', SupportsShouldProcess)]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Object",
+            ParameterSetName = 'Object',
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Object describing the new policy.")]
+            HelpMessage = 'Object describing the new policy.')]
         [object]$PolicyObject,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "JsonBody",
+            ParameterSetName = 'JsonBody',
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Object describing the new policy.")]
+            HelpMessage = 'Object describing the new policy.')]
         [string]$PolicyString,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "File",
+            ParameterSetName = 'File',
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Object describing the new policy.")]
+            HelpMessage = 'Object describing the new policy.')]
         [string]$PolicyFile
     )
     begin
@@ -48,7 +48,7 @@ function New-MSGConditionalAccessPolicy
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -56,28 +56,43 @@ function New-MSGConditionalAccessPolicy
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "object"
+            'object'
             {
-                try { $policyBody = ConvertTo-Json $policyObject -Depth 10 }
-                catch { throw "Provided object cannot be converted to JSON" }
+                try
+                {
+                    $policyBody = ConvertTo-Json $policyObject -Depth 10 
+                }
+                catch
+                {
+                    throw 'Provided object cannot be converted to JSON' 
+                }
                 break
             }
 
-            "string"
+            'string'
             {
-                try { $policyObject = $PolicyString | ConvertFrom-Json }
-                catch { throw "Provided string does not appear to be valid JSON" }
+                try
+                {
+                    $policyObject = $PolicyString | ConvertFrom-Json 
+                }
+                catch
+                {
+                    throw 'Provided string does not appear to be valid JSON' 
+                }
                 break
             }
 
-            "file"
+            'file'
             {
                 try
                 {
                     $policyBody = Get-Content -Raw $policyFile
                     $policyObject = $policyBody | ConvertFrom-Json
                 }
-                catch { throw "File content does not appear to be valid JSON" }
+                catch
+                {
+                    throw 'File content does not appear to be valid JSON' 
+                }
                 break
             }
         }
@@ -86,9 +101,9 @@ function New-MSGConditionalAccessPolicy
 
         foreach ($policy in $policyObject)
         {
-            if ($PSCmdlet.ShouldProcess("$($Policy.displayName)", "Add CA policy"))
+            if ($PSCmdlet.ShouldProcess("$($Policy.displayName)", 'Add CA policy'))
             {
-                New-MSGObject -Type "identity/conditionalAccess/policies" -Object $policy
+                New-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'identity/conditionalAccess/policies' -Object $policy
             }
         }
     }

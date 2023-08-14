@@ -143,6 +143,6 @@ function Get-MSGGroupMember
         }
         $queryString = 'groups/{0}/{1}' -f $Id, $queryCmd
 
-        Get-MSGObject -Type $queryString -All:$All -Filter $queryFilter -CountOnly:$CountOnly
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $queryString -All:$All -Filter $queryFilter -CountOnly:$CountOnly
     }
 }

@@ -34,17 +34,17 @@ function Remove-MSGGroup
     [CmdletBinding(ConfirmImpact = 'High', SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the group")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the group')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search")]
+            ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
@@ -57,19 +57,19 @@ function Remove-MSGGroup
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
 
         $groupList = @()
         if ($PermanentlyDelete)
         {
-            $queryString = "directory/deleteditems"
-            $WhatIfMessage = "Permanently delete"
+            $queryString = 'directory/deleteditems'
+            $WhatIfMessage = 'Permanently delete'
         }
         else
         {
-            $queryString = "groups"
-            $WhatIfMessage = "Delete"
+            $queryString = 'groups'
+            $WhatIfMessage = 'Delete'
         }
     }
 
@@ -77,13 +77,19 @@ function Remove-MSGGroup
     {
         if (-not $Id -and [string]::IsNullOrEmpty($SearchString))
         {
-            throw "Either an objectId or search string must be provided"
+            throw 'Either an objectId or search string must be provided'
         }
 
         if ($SearchString)
         {
-            try { $groupList = ProcessGroupSearchString -SearchString $SearchString }
-            catch { return $null }
+            try
+            {
+                $groupList = ProcessGroupSearchString -SearchString $SearchString 
+            }
+            catch
+            {
+                return $null 
+            }
             if ($null -eq $groupList)
             {
                 return $null
@@ -94,7 +100,7 @@ function Remove-MSGGroup
 
         if ($PSCmdlet.ShouldProcess("$Id", "$WhatIfMessage"))
         {
-            Remove-MSGObject -Type $queryString -Id $Id
+            Remove-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $queryString -Id $Id
         }
     }
 }

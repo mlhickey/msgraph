@@ -49,33 +49,33 @@ function Get-MSGOAuth2PermissionGrant
     .LINK
     https://docs.microsoft.com/en-us/graph/api/oauth2permissiongrant-get?view=graph-rest-beta
     #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $true,
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            ParameterSetName = "Id",
-            HelpMessage = "Id of the OAuth grant")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            ParameterSetName = 'Id',
+            HelpMessage = 'Id of the OAuth grant')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "TopAll")]
+            ParameterSetName = 'TopAll')]
         [int]$Top = 100,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "TopAll",
-            HelpMessage = "Return all grants")]
+            ParameterSetName = 'TopAll',
+            HelpMessage = 'Return all grants')]
         [switch]$All,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "TopAll")]
+            ParameterSetName = 'TopAll')]
         [switch]$OnlyAdminConsented,
 
         [Parameter(Mandatory = $false)]
@@ -87,14 +87,14 @@ function Get-MSGOAuth2PermissionGrant
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
         $argList = @()
-        $typeString = "oAuth2Permissiongrants"
+        $typeString = 'oAuth2Permissiongrants'
 
         if (-not [string]::IsNullOrEmpty($Id))
         {
@@ -106,12 +106,12 @@ function Get-MSGOAuth2PermissionGrant
             $argList += "consentType eq 'AllPrincipals'"
         }
 
-        $filterArg = $argList -join " and "
+        $filterArg = $argList -join ' and '
 
         if (-not [string]::IsNullOrEmpty($properties))
         {
             $filterArg += "`$select="
-            $propFilter += $properties -join ","
+            $propFilter += $properties -join ','
         }
 
         if (-not $All)
@@ -119,14 +119,17 @@ function Get-MSGOAuth2PermissionGrant
             $filterArg += "&`$top=$top"
         }
 
-        $res = Get-MSGObject -Type $typeString -Filter $filterArg -All:$All
-        if ($res.StatusCode -ge 400) { return $res }
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Filter $filterArg -All:$All
+        if ($res.StatusCode -ge 400)
+        {
+            return $res 
+        }
         if ($ResolveIds.IsPresent)
         {
             foreach ($r in $res)
             {
                 $resolvedObject = [PSCustomObject][Ordered]@{
-                    PSTypeName   = "MSGraph.ExpandedoAuth2PermissionGrant"
+                    PSTypeName   = 'MSGraph.ExpandedoAuth2PermissionGrant'
                     ClientId     = $r.clientId
                     ClientName   = (Get-MSGObjectById -Ids $r.clientId -Filter "`$select=displayName").displayName
                     ConsentType  = $r.consentType

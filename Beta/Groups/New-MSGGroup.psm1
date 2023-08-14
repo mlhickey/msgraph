@@ -138,7 +138,7 @@ function New-MSGGroup
         }
         if ($PSCmdlet.ShouldProcess("$Id", "Create group"))
         {
-            New-MSGObject -Type groups -Body $groupBody
+            New-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type groups -Body $groupBody
         }
     }
 }

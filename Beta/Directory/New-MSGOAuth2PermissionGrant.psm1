@@ -110,6 +110,6 @@ function New-MSGOAuth2PermissionGrant
             expiryTime  = $Now
         }
 
-        New-MSGObject -Type "oAuth2Permissiongrants " -Body $oauth2Grant
+        New-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "oAuth2Permissiongrants " -Body $oauth2Grant
     }
 }

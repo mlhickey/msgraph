@@ -35,58 +35,58 @@ function Get-MSGPrintConnector
      https://docs.microsoft.com/en-us/graph/api/device-list?view=graph-rest-beta&tabs=http
 
     #>
-    [CmdletBinding(DefaultParameterSetName = "TopAll")]
+    [CmdletBinding(DefaultParameterSetName = 'TopAll')]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the device.")]
+            HelpMessage = 'ObjectId of the device.')]
         [ValidateNotNullOrEmpty()]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Partial/complete displayname of the object.")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Partial/complete displayname of the object.')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Filter",
-            HelpMessage = "OData query filter")]
-        [Parameter(ParameterSetName = "Id")]
-        [Parameter(ParameterSetName = "Count")]
-        [Parameter(ParameterSetName = "TopAll")]
+            ParameterSetName = 'Filter',
+            HelpMessage = 'OData query filter')]
+        [Parameter(ParameterSetName = 'Id')]
+        [Parameter(ParameterSetName = 'Count')]
+        [Parameter(ParameterSetName = 'TopAll')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
-        [Parameter(ParameterSetName = "Id",
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'Id',
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "TopAll",
-            HelpMessage = "Return all devices in directory")]
-        [Parameter(ParameterSetName = "Search")]
-        [Parameter(ParameterSetName = "Filter")]
+            ParameterSetName = 'TopAll',
+            HelpMessage = 'Return all devices in directory')]
+        [Parameter(ParameterSetName = 'Search')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$All,
 
-        [Parameter(ParameterSetName = "Count")]
+        [Parameter(ParameterSetName = 'Count')]
         [switch]$CountOnly
     )
 
@@ -95,7 +95,7 @@ function Get-MSGPrintConnector
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -104,20 +104,20 @@ function Get-MSGPrintConnector
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
-                Get-MSGObject -Type "print/connectors/$Id" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "print/connectors/$Id" -Filter $queryFilter
                 break
             }
 
-            { $PSItem -match "topall|search" }
+            { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type "print/connectors" -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'print/connectors' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
-            "count"
+            'count'
             {
-                Get-MSGObject -Type "print/connectors" -Filter $queryFilter -CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'print/connectors' -Filter $queryFilter -CountOnly
             }
 
         }

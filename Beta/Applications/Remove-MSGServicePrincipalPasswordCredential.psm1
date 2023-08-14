@@ -22,16 +22,16 @@ function Remove-MSGServicePrincipalPasswordCredential
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Id of the servicePrincipal")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Id of the servicePrincipal')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Password credential keyId to remove")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'Password credential keyId to remove')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$keyId
     )
 
@@ -40,14 +40,14 @@ function Remove-MSGServicePrincipalPasswordCredential
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
         $arg = $res = $null
-        $res = Get-MSGObject -Type "servicePrincipals/$id" -Filter "`$select=passwordCredentials"
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "servicePrincipals/$id" -Filter "`$select=passwordCredentials"
 
         if ($null -eq $res -or $res.StatusCode -ge 400)
         {
@@ -59,7 +59,7 @@ function Remove-MSGServicePrincipalPasswordCredential
         if (($null -ne $pwdList) -and [bool]($pwdList.Where( { $_.KeyId -eq $keyId })))
         {
             $arg = [psobject]@{
-                "keyId" = "$keyId"
+                'keyId' = "$keyId"
             }
         }
         else
@@ -70,9 +70,9 @@ function Remove-MSGServicePrincipalPasswordCredential
             }
         }
 
-        if ($null -ne $arg -and $PSCmdlet.ShouldProcess("$Id", "Delete passwordCredentials"))
+        if ($null -ne $arg -and $PSCmdlet.ShouldProcess("$Id", 'Delete passwordCredentials'))
         {
-            Set-MSGObject -Type servicePrincipals -Id "$id/removePassword" -Body $arg -Method POST
+            Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type servicePrincipals -Id "$id/removePassword" -Body $arg -Method POST
         }
     }
 }

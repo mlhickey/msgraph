@@ -5,7 +5,7 @@ function ProcessGroupSearchString
     )
     $SearchString = [uri]::EscapeDataString($SearchString)
     $Filter = "(startswith(displayName,'$SearchString') or startswith(mail,'$SearchString'))&`$select=displayName,id"
-    $list = Get-MSGObject -Type groups -Filter $Filter -All
+    $list = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type groups -Filter $Filter -All
     if ($null -eq $list)
     {
         return $null
@@ -18,9 +18,12 @@ function ProcessGroupSearchString
         {
             Write-Warning "Found $($list.count) groups that match partial string.  Please select one of these groups and provide the associated objectId"
             $list | Sort-Object -Property displayname
-            throw "Too many groups"
+            throw 'Too many groups'
         }
     }
-    else { $group = $list }
+    else
+    {
+        $group = $list 
+    }
     return $group
 }

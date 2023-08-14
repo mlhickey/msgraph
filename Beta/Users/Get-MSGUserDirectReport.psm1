@@ -77,6 +77,6 @@ function Get-MSGUserDirectReport
             }
         }
 
-        Get-MSGObject -Type $typeString
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString
     }
 }

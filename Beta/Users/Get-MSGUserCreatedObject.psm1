@@ -33,25 +33,25 @@ function Get-MSGUserCreatedObject
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the User.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the User.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
-        [Parameter(ParameterSetName = "My")]
+        [Parameter(ParameterSetName = 'My')]
         [ValidateNotNullOrEmpty()]
         [switch]$MyUser,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
@@ -67,7 +67,7 @@ function Get-MSGUserCreatedObject
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
     }
@@ -76,19 +76,19 @@ function Get-MSGUserCreatedObject
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "id"
+            'id'
             {
                 $id = [uri]::EscapeDataString($id)
-                $typeString = "users/{0}/createdObjects" -f $Id
+                $typeString = 'users/{0}/createdObjects' -f $Id
                 break
             }
-            "my"
+            'my'
             {
-                $typeString = "me/createdObjects"
+                $typeString = 'me/createdObjects'
                 break
             }
         }
 
-        Get-MSGObject -Type $typeString -Filter $queryFilter -All:$All
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Filter $queryFilter -All:$All
     }
 }

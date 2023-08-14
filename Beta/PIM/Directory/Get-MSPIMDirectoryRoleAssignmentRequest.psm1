@@ -55,7 +55,7 @@ function Get-MSPIMDirectoryRoleAssignmentRequest
         [Parameter(ParameterSetName = 'My')]
         [Parameter(ParameterSetName = 'User')]
         [Alias('RoleDefinitionId')]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$RoleID,
 
         [Parameter(ParameterSetName = 'User',
@@ -100,7 +100,7 @@ function Get-MSPIMDirectoryRoleAssignmentRequest
         {
             'my'
             {
-                $Id = (Get-MSGObject -Type 'me' -Filter "`$select=id").Id
+                $Id = (Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'me' -Filter "`$select=id").Id
                 $filterList += "subjectId eq '${id}'"
                 break
             }
@@ -145,7 +145,7 @@ function Get-MSPIMDirectoryRoleAssignmentRequest
             $filter = @($filter, "`$top=$top") -join '&'
         }
 
-        $res = Get-MSGObject -Type $formatstring  -Filter $filter -All:$All -ObjectName 'MSPIM'
+        $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $formatstring -Filter $filter -All:$All -ObjectName 'MSPIM'
         if ($null -ne $res -and $res.StatusCode -lt 300)
         {
             $res | ForEach-Object { $_.PSOBject.TypeNames.Insert(0, 'MSPIM.privilegedAccess.roleAssignmentRequests') }

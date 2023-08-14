@@ -6,7 +6,7 @@ function New-SigninRecord
     )
 
     $reportBody = [PSCustomObject][Ordered]@{
-        PSTypeName                       = "MSGraph.SigninRecord"
+        PSTypeName                       = 'MSGraph.SigninRecord'
         Date                             = $record.createdDateTime
         UserDisplayName                  = $record.UserDisplayName
         userPrincipalName                = $record.userPrincipalName

@@ -18,13 +18,13 @@ function Disable-MSPIMDirectoryRoleAssignment
 
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
-    [CmdletBinding(DefaultParameterSetName = "Unknown")]
+    [CmdletBinding(DefaultParameterSetName = 'Unknown')]
     param(
         [Parameter(Mandatory = $false,
             Position = 1,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Reason for elevation")]
+            HelpMessage = 'Reason for elevation')]
         [ValidateNotNullOrEmpty()]
         [string]$Reason
     )
@@ -44,7 +44,7 @@ function Disable-MSPIMDirectoryRoleAssignment
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
@@ -52,25 +52,25 @@ function Disable-MSPIMDirectoryRoleAssignment
     {
         switch ($PsCmdlet.ParameterSetName.ToLower())
         {
-            "unknown"
+            'unknown'
             {
-                Write-Error "You must provide either a RoleId or RoleName"
+                Write-Error 'You must provide either a RoleId or RoleName'
                 return $null
             }
-            "rolename"
+            'rolename'
             {
                 $RoleName = $PSBoundParameters['RoleName']
                 $roleDefinitionId = $global:roleName2Id.Item($RoleName)
                 break
             }
-            "roleid"
+            'roleid'
             {
                 $roleDefinitionId = $PSBoundParameters['RoleId']
                 break
             }
         }
 
-        # $SubjectId = (Get-MSGObject -Type "me" -Filter "`$select=id").Id
+        # $SubjectId = (Get-MSGObject  -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "me" -Filter "`$select=id").Id
         $activeRole = $myRoles.Where( { $_.RoleDefinitionId -eq $roleDefinitionId })
 
         $disableBody = [PSCustomObject][Ordered]@{
@@ -78,12 +78,15 @@ function Disable-MSPIMDirectoryRoleAssignment
             resourceId                     = $activeRole.resourceId
             subjectId                      = $activeRole.subjectId
             assignmentState                = $activeRole.AssignMentState
-            type                           = "UserRemove"
+            type                           = 'UserRemove'
             linkedEligibleRoleAssignmentId = $activeRole.linkedEligibleRoleAssignmentId
         }
 
-        if (-not [string]::IsNullOrEmpty($Reason)) { Add-Member -InputObject $disableBody -MemberType NoteProperty -Name 'reason' -Value $Reason }
+        if (-not [string]::IsNullOrEmpty($Reason))
+        {
+            Add-Member -InputObject $disableBody -MemberType NoteProperty -Name 'reason' -Value $Reason 
+        }
 
-        Set-MSGObject -Type "privilegedAccess/aadroles/roleAssignmentRequests" -Method POST -Body $disableBody -ObjectName "MSPIM"
+        Set-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'privilegedAccess/aadroles/roleAssignmentRequests' -Method POST -Body $disableBody -ObjectName 'MSPIM'
     }
 }

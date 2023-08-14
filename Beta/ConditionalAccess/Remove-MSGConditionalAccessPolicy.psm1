@@ -17,13 +17,13 @@ function Remove-MSGConditionalAccessPolicy
     [CmdletBinding(ConfirmImpact = 'High', SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory = $true,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the policy.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the policy.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id
     )
 
@@ -32,16 +32,16 @@ function Remove-MSGConditionalAccessPolicy
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
 
-        if ($PSCmdlet.ShouldProcess("$Id", "Remove CA policy"))
+        if ($PSCmdlet.ShouldProcess("$Id", 'Remove CA policy'))
         {
-            Remove-MSGObject -Type "conditionalAccess/policies" -Id $id
+            Remove-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'conditionalAccess/policies' -Id $id
         }
     }
 }

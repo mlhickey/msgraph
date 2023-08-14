@@ -22,12 +22,12 @@ function Get-MSGUserMembership
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Either the ObjectId or the UserPrincipalName of the User.")]
-        [Alias("ObjectId", "UserPrincipalName")]
+            HelpMessage = 'Either the ObjectId or the UserPrincipalName of the User.')]
+        [Alias('ObjectId', 'UserPrincipalName')]
         [string]$Id,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "Return only security groups")]
+            HelpMessage = 'Return only security groups')]
         [switch]$OnlySGs
     )
 
@@ -36,15 +36,15 @@ function Get-MSGUserMembership
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
     }
 
     process
     {
         $id = [uri]::EscapeDataString($id)
-        $body = @{ "securityEnabledOnly" = $OnlySGs.IsPresent }
-        $typeString = "users/{0}/getMemberObjects" -f $Id
-        Get-MSGObject -Type $typeString -Method POST -Body $body -All
+        $body = @{ 'securityEnabledOnly' = $OnlySGs.IsPresent }
+        $typeString = 'users/{0}/getMemberObjects' -f $Id
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type $typeString -Method POST -Body $body -All
     }
 }

@@ -42,46 +42,46 @@ function Get-MSGPolicyAppliesTo
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Id",
+            ParameterSetName = 'Id',
             Position = 0,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "ObjectId of the Policy.")]
-        [Alias("ObjectId")]
-        [ValidatePattern("^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$")]
+            HelpMessage = 'ObjectId of the Policy.')]
+        [Alias('ObjectId')]
+        [ValidatePattern('^([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}$')]
         [string]$Id,
 
         [Parameter(Mandatory = $true,
             ValueFromPipeline = $true,
             ValueFromPipelineByPropertyName = $true,
-            HelpMessage = "Policy type: ActivityBasedTimeout, ClaimsMapping, HomeRealmDiscovery or TokenLifetime")]
+            HelpMessage = 'Policy type: ActivityBasedTimeout, ClaimsMapping, HomeRealmDiscovery or TokenLifetime')]
         [ValidateNotNullOrEmpty()]
-        [ValidateSet("ActivityBasedTimeout", "ClaimsMapping", "HomeRealmDiscovery", "TokenLifetime")]
+        [ValidateSet('ActivityBasedTimeout', 'ClaimsMapping', 'HomeRealmDiscovery', 'TokenLifetime')]
         [string]$PolicyType,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "OData query filter")]
+            HelpMessage = 'OData query filter')]
         [ValidateNotNullOrEmpty()]
         [string]$Filter,
 
         [Parameter(Mandatory = $false,
-            ParameterSetName = "Search",
-            HelpMessage = "Partial/complete displayname of the policy.")]
+            ParameterSetName = 'Search',
+            HelpMessage = 'Partial/complete displayname of the policy.')]
         [ValidateNotNullOrEmpty()]
         [string]$SearchString,
 
         [Parameter(Mandatory = $false,
-            HelpMessage = "List of properties to return. Note that these are case sensitive")]
+            HelpMessage = 'List of properties to return. Note that these are case sensitive')]
         [ValidateNotNullOrEmpty()]
         [string[]]$Properties,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = "TopAll")]
-        [Parameter(ParameterSetName = "Search")]
+        [Parameter(ParameterSetName = 'TopAll')]
+        [Parameter(ParameterSetName = 'Search')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )
@@ -91,17 +91,17 @@ function Get-MSGPolicyAppliesTo
         $MSGAuthInfo = Get-MSGConfig
         if ($MSGAuthInfo.Initialized -ne $true)
         {
-            throw "You must call the Connect-MSG cmdlet before calling any other cmdlets"
+            throw 'You must call the Connect-MSG cmdlet before calling any other cmdlets'
         }
         $queryFilter = ProcessBoundParams -paramList $PSBoundParameters
         #$policy = $policyType.Substring(0, 1).ToLower() + $policyType.Substring(1) + "Policies"
-        $policy = "{0}Policies" -f (camelCase $PolicyType)
+        $policy = '{0}Policies' -f (camelCase $PolicyType)
 
     }
 
     process
     {
-        Get-MSGObject -Type "policies/$policy/$Id/appliesTo" -Filter $queryFilter
+        Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "policies/$policy/$Id/appliesTo" -Filter $queryFilter
     }
 }
 

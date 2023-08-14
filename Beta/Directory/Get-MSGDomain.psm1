@@ -95,13 +95,13 @@ function Get-MSGDomain
         {
             'id'
             {
-                Get-MSGObject -Type "domains/$DomainName" -Filter $queryFilter
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type "domains/$DomainName" -Filter $queryFilter
                 break
             }
 
             { $PSItem -match 'topall|search' }
             {
-                Get-MSGObject -Type 'domains' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
+                Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'domains' -Filter $queryFilter -All:$All -CountOnly:$CountOnly
                 break
             }
         }
