@@ -31,13 +31,9 @@ function Get-MSGservicePrincipalSignInActivities
         [ValidateRange(1, 30)]
         [string]$ReportPeriod = '7',
 
-        [Parameter(ParameterSetName = 'TopAll')]
-        [Parameter(ParameterSetName = 'Search')]
         [ValidateNotNullOrEmpty()]
         [int]$Top = 100,
 
-        [Parameter(ParameterSetName = 'TopAll')]
-        [Parameter(ParameterSetName = 'Search')]
         [Parameter(Mandatory = $false)]
         [switch]$All
     )

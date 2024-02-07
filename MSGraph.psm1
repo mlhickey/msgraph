@@ -348,7 +348,7 @@ function Connect-MSG
         Set-MSGConfig -ConfigObject $MSGAuthInfo
         $MSGAuthInfo.TenantDomain = ((Get-MSGOrganization -Properties verifieddomains).verifiedDomains | Where-Object isDefault -EQ $true).name
         Set-MSGConfig -ConfigObject $MSGAuthInfo
-        if ($MSGAuthInfo.AuthType -eq 'User' -and $null -eq $global:PIMRoleDictionary)
+        if ($MSGAuthInfo.AuthType -eq 'User' -and $global:PIMRoleDictionary.Count -le 1)
         {
             Write-Verbose 'Setting up PIM role information ...'
             <#

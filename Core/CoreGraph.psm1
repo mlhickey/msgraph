@@ -196,7 +196,7 @@ function Get-MSGObject
             $nextLink = ((Get-Member -InputObject $result).Where( { $_.Name -match 'nextLink' })).Name
             if ($null -ne $nextLink)
             {
-                if ($All -or -- $count -gt 0)
+                if ($All -or --$count -gt 0)
                 {
                     $nextLink = $result.$nextLink
                 }
@@ -402,7 +402,7 @@ function New-MSGObject
 
         if ($null -ne $result)
         {
-            $result.PSOBject.Properties.Remove('@odata.context');
+            $result.PSOBject.Properties.Remove('@odata.context')
             $type = $result.'@odata.type'
             if ([string]::IsNullOrEmpty($type))
             {

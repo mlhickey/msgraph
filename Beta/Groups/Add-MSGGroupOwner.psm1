@@ -19,7 +19,7 @@ function Add-MSGGroupOwner
     #>
 
     [CmdletBinding()]
-    [Alias('Add-MSGgraphGroupOwner')]
+    [Alias('New-MSGGroupOwner')]
     param(
         [Parameter(Mandatory = $true,
             Position = 0,

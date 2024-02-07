@@ -82,7 +82,7 @@ function Get-MSGUserOwnedObject
             }
             'my'
             {
-                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'me' -Filter $queryFilter -All:$All
+                $res = Get-MSGObject -Debug:$DebugPreference -Verbose:$VerbosePreference -Type 'me/ownedObjects' -Filter $queryFilter -All:$All
                 break
             }
         }
